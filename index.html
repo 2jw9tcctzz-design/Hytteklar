@@ -1,0 +1,1586 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#5E7A9B">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="description" content="HytteKlar – familiens kontrolcenter for hytten i Kvitfjell">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="HytteKlar">
+<title>HytteKlar</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235E7A9B'/%3E%3Cpath d='M4 25 L12 10 L17 18 L21 12 L28 25 Z' fill='%23E9F0F5'/%3E%3Cpath d='M12 10 L14.5 14.5 L12 16 L9.5 14 Z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   HytteKlar · Fjeldpastel designsystem
+   Blød, illustrativ nordisk stil: pastelfjelde, runde kort,
+   stiplede skillelinjer, venlige statuschips.
+   ========================================================= */
+
+:root {
+  /* Basis */
+  --bg: #fbf8f2;
+  --surface: #ffffff;
+  --ink: #3b3630;
+  --ink-70: #59544b;
+  --ink-45: #8b857a;
+  --line: #f0ebe1;
+
+  /* Fjeldpastel-palette */
+  --blue: #5e7a9b;      /* fjeldblå (vinter-accent) */
+  --blue-2: #8fa8c4;
+  --blue-tint: #e3edf6;
+  --green: #6e8f68;     /* grangrøn (sommer-accent) */
+  --green-2: #a8c4a2;
+  --green-tint: #e7f0e4;
+  --ochre: #d07b4c;     /* dæmpet okker/orange */
+  --ochre-soft: #f0b98a;
+  --ochre-tint: #f9e9ce;
+  --red: #b4523f;       /* blød rød — kun kritisk */
+  --red-tint: #f7ddd6;
+  --sand: #f0ebe1;
+
+  /* Sæson-accent (overstyres af .season-summer) */
+  --accent: var(--blue);
+  --accent-2: var(--blue-2);
+  --accent-tint: var(--blue-tint);
+
+  /* Form */
+  --r-lg: 26px;
+  --r: 22px;
+  --r-sm: 15px;
+  --shadow: 0 8px 20px rgba(90, 90, 120, 0.08);
+  --shadow-lg: 0 12px 30px rgba(90, 90, 120, 0.12);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+.season-summer {
+  --accent: var(--green);
+  --accent-2: var(--green-2);
+  --accent-tint: var(--green-tint);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+input, select, textarea {
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 11px 13px;
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- App-skelet ---------- */
+.app { max-width: 1120px; margin: 0 auto; min-height: 100vh; }
+.body-wrap { display: flex; }
+.main { flex: 1; min-width: 0; padding: 0 16px 108px; }
+.main-inner { max-width: 640px; margin: 0 auto; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(251, 248, 242, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand .logo {
+  width: 34px; height: 34px; border-radius: 12px;
+  background: var(--accent); color: #fff;
+  display: grid; place-items: center; font-size: 17px;
+  box-shadow: var(--shadow);
+}
+.brand .name { font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+.brand .name b { color: var(--accent); }
+
+.season-toggle { display: flex; gap: 4px; background: var(--sand); padding: 4px; border-radius: 999px; }
+.season-toggle button {
+  padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  color: var(--ink-70); display: flex; align-items: center; gap: 5px;
+}
+.season-toggle button.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+
+/* Sidebar (desktop) */
+.sidebar { display: none; }
+@media (min-width: 900px) {
+  .main { padding: 0 28px 40px; }
+  .sidebar {
+    display: flex; flex-direction: column; gap: 3px;
+    width: 220px; flex: none; padding: 22px 14px;
+    position: sticky; top: 62px; align-self: flex-start;
+    height: calc(100vh - 62px);
+  }
+  .sidebar a {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px; border-radius: var(--r-sm);
+    font-weight: 600; color: var(--ink-70); font-size: 15px;
+  }
+  .sidebar a.on { background: var(--accent-tint); color: var(--accent); }
+  .sidebar a:hover { background: var(--line); }
+  .bottomnav { display: none !important; }
+}
+
+/* Bundnavigation (mobil) */
+.bottomnav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  max-width: 1120px; margin: 0 auto;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  border-top: 1.5px solid var(--line);
+  display: flex; justify-content: space-around;
+  padding: 8px 6px calc(9px + env(safe-area-inset-bottom));
+}
+.bottomnav a {
+  flex: 1; min-width: 0; text-align: center;
+  font-size: 10.5px; font-weight: 700; color: var(--ink-45);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 4px 2px;
+}
+.bottomnav a .ni { font-size: 20px; filter: grayscale(1); opacity: 0.5; }
+.bottomnav a.on { color: var(--accent); }
+.bottomnav a.on .ni { filter: none; opacity: 1; }
+.bottomnav a.on .nlbl { background: var(--accent-tint); padding: 1px 10px; border-radius: 999px; }
+
+/* ---------- Hero (dashboard) ---------- */
+.hero { position: relative; margin: 0 -16px; overflow: hidden; }
+@media (min-width: 900px) { .hero { margin: 18px 0 0; border-radius: var(--r-lg); box-shadow: var(--shadow-lg); } }
+.hero svg { display: block; width: 100%; height: auto; }
+.hero .greet {
+  position: absolute; left: 22px; bottom: 56px; color: #fff;
+  text-shadow: 0 1px 10px rgba(40, 55, 80, 0.35), 0 1px 3px rgba(40, 55, 80, 0.3);
+}
+.hero .greet .hej { font-size: 14.5px; font-weight: 700; opacity: 0.92; }
+.hero .greet h1 { font-size: clamp(27px, 7vw, 32px); color: #fff; margin-top: 2px; }
+
+/* ---------- Kort & sektioner ---------- */
+.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+}
+.card.pad { padding: 17px; }
+
+.page-head { margin: 20px 2px 16px; }
+.page-head .eyebrow {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ochre); margin-bottom: 5px;
+}
+.page-head h1 { font-size: clamp(25px, 6vw, 31px); }
+.page-head p { margin: 6px 0 0; color: var(--ink-70); font-size: 14.5px; max-width: 54ch; }
+
+.sect {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin: 20px 4px 10px;
+}
+.sect h2 { font-size: 18.5px; }
+.sect a, .sect button.link { font-size: 13px; font-weight: 700; color: var(--accent); }
+
+/* Ready-kort med fremdrift */
+.ready { padding: 17px; display: flex; gap: 14px; align-items: center; }
+.ready .badge {
+  width: 54px; height: 54px; border-radius: 19px; flex: none;
+  background: var(--accent-tint); display: grid; place-items: center; font-size: 25px;
+}
+.ready h2 { font-size: 18.5px; }
+.ready p { font-size: 13.5px; color: var(--ink-45); margin: 2px 0 0; }
+
+.bar { height: 10px; border-radius: 999px; background: var(--sand); overflow: hidden; margin-top: 10px; }
+.bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); transition: width 0.3s; }
+.bar-lbl { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--ink-45); margin-top: 6px; }
+
+/* Statusfliser */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin-top: 14px; }
+@media (min-width: 680px) { .tiles { grid-template-columns: repeat(6, 1fr); } .tiles.four { grid-template-columns: repeat(4, 1fr); } }
+.tile { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 13px 12px; text-align: left; display: block; }
+.tile .em { font-size: 21px; }
+.tile .n { font-family: var(--font-display); font-size: 23px; font-weight: 700; margin-top: 5px; }
+.tile .t { font-size: 11.5px; color: var(--ink-45); line-height: 1.25; margin-top: 1px; font-weight: 600; }
+
+/* Tur-kort */
+.trip { border-radius: var(--r); padding: 15px 16px; display: flex; align-items: center; gap: 13px; background: var(--accent-tint); }
+.trip .cal {
+  width: 50px; height: 56px; background: var(--surface); border-radius: 15px; flex: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: var(--shadow);
+}
+.trip .cal .m { font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; color: var(--red); }
+.trip .cal .d { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+.trip h3 { font-size: 16.5px; }
+.trip p { font-size: 12.5px; color: var(--ink-70); margin: 1px 0 0; }
+
+/* Lister med stiplede skillelinjer */
+.list { overflow: hidden; }
+.li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px; border-bottom: 1.5px dashed var(--line);
+}
+.li:last-child { border-bottom: none; }
+.li .ic {
+  width: 40px; height: 40px; border-radius: 14px; flex: none;
+  display: grid; place-items: center; font-size: 19px; background: var(--sand);
+}
+.li .li-main { flex: 1; min-width: 0; }
+.li .nm { font-weight: 700; font-size: 14.5px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.li .ct { font-size: 12px; color: var(--ink-45); margin-top: 1px; }
+.li .li-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex: none; }
+
+/* Statuschips */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 700; white-space: nowrap;
+}
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.75; }
+.chip.ok { background: var(--green-tint); color: #4e7247; }
+.chip.warn { background: var(--ochre-tint); color: #a16a1f; }
+.chip.bad { background: var(--red-tint); color: var(--red); }
+.chip.info { background: var(--blue-tint); color: #4a6b8a; }
+.chip.neutral { background: var(--sand); color: var(--ink-70); }
+.chip.clickable { cursor: pointer; }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; background: var(--sand); color: var(--ink-70);
+}
+
+/* Knapper */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 18px; border-radius: 999px;
+  font-weight: 700; font-size: 14px;
+  background: var(--accent); color: #fff; box-shadow: var(--shadow);
+}
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: var(--surface); color: var(--accent); border: 1.5px solid var(--line); box-shadow: none; }
+.btn.soft { background: var(--accent-tint); color: var(--accent); box-shadow: none; }
+.btn.danger { background: var(--red-tint); color: var(--red); box-shadow: none; }
+.btn.sm { padding: 8px 14px; font-size: 13px; }
+.btn.block { width: 100%; }
+
+/* Filterchips (vandret scroll) */
+.filters {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 2px 2px 10px; margin: 0 -2px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.fbtn {
+  flex: none; padding: 8px 15px; border-radius: 999px;
+  font-size: 13px; font-weight: 700;
+  background: var(--surface); border: 1.5px solid var(--line); color: var(--ink-70);
+}
+.fbtn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Checklister */
+.chk-row {
+  display: flex; align-items: center; gap: 13px;
+  padding: 15px 16px; border-bottom: 1.5px dashed var(--line);
+  cursor: pointer; user-select: none;
+}
+.chk-row:last-child { border-bottom: none; }
+.chk-box {
+  width: 30px; height: 30px; border-radius: 10px; flex: none;
+  border: 2px solid #ddd5c6; display: grid; place-items: center;
+  color: #fff; font-size: 16px; transition: background 0.15s, border-color 0.15s;
+}
+.chk-row.done .chk-box { background: var(--accent); border-color: var(--accent); }
+.chk-row .txt { font-size: 15.5px; font-weight: 600; flex: 1; }
+.chk-row.done .txt { color: var(--ink-45); text-decoration: line-through; }
+.chk-row .crit { font-size: 11px; font-weight: 800; color: var(--red); background: var(--red-tint); padding: 2px 8px; border-radius: 999px; flex: none; }
+
+.mini-bar { height: 7px; border-radius: 999px; background: var(--sand); overflow: hidden; margin-top: 8px; }
+.mini-bar i { display: block; height: 100%; border-radius: 999px; background: var(--accent-2); }
+
+/* Personkort (tøj) */
+.p-av {
+  width: 44px; height: 44px; border-radius: 15px; flex: none;
+  display: grid; place-items: center; color: #fff;
+  font-family: var(--font-display); font-weight: 700; font-size: 17px;
+}
+
+/* Oplevelseskort */
+.exp-grid { display: grid; gap: 14px; }
+@media (min-width: 600px) { .exp-grid { grid-template-columns: 1fr 1fr; } }
+.exp { border-radius: var(--r); overflow: hidden; background: var(--surface); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.exp .exp-img { position: relative; }
+.exp .exp-img svg { display: block; width: 100%; height: auto; }
+.exp .exp-body { padding: 13px 15px 15px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.exp h3 { font-size: 17px; }
+.exp .desc { font-size: 13px; color: var(--ink-70); flex: 1; margin: 0; }
+.exp .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Tom tilstand */
+.empty { text-align: center; padding: 36px 20px; color: var(--ink-45); }
+.empty .em-ic {
+  width: 58px; height: 58px; border-radius: 20px; margin: 0 auto 12px;
+  background: var(--accent-tint); display: grid; place-items: center; font-size: 26px;
+}
+.empty h3 { font-size: 18px; color: var(--ink); margin-bottom: 4px; }
+.empty p { font-size: 14px; margin: 0; }
+
+/* Modal / formular */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(59, 54, 48, 0.4);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+@media (min-width: 640px) { .modal-backdrop { align-items: center; padding: 24px; } }
+.modal {
+  background: var(--bg); width: 100%; max-width: 520px;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  max-height: 92vh; overflow-y: auto; padding: 20px 18px 26px;
+}
+@media (min-width: 640px) { .modal { border-radius: var(--r-lg); } }
+.modal h2 { font-size: 21px; margin-bottom: 14px; }
+.field { margin-bottom: 13px; }
+.field label { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink-70); margin-bottom: 5px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.check-line { display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600; }
+.check-line input { width: 20px; height: 20px; accent-color: var(--accent); }
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.modal-actions .btn { flex: 1; }
+
+/* Kanban (opgaver) */
+.kanban { display: grid; gap: 16px; }
+@media (min-width: 820px) { .kanban { grid-template-columns: 1fr 1fr 1fr; } }
+.kc-head {
+  display: flex; align-items: center; gap: 8px; margin: 0 2px 9px;
+  font-weight: 800; font-size: 12px; color: var(--ink-70);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.kc-head .count { background: var(--sand); border-radius: 999px; padding: 1px 9px; font-size: 12px; }
+.task { padding: 14px 14px 14px 0; margin-bottom: 10px; display: flex; gap: 12px; }
+.task .prio { width: 5px; border-radius: 0 99px 99px 0; flex: none; align-self: stretch; }
+.task h3 { font-size: 15px; font-family: var(--font-body); font-weight: 700; }
+.task .desc { font-size: 13px; color: var(--ink-70); margin: 4px 0 0; }
+.task .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 8px; flex-wrap: wrap; }
+
+/* Gæsteside */
+.guest-hero { position: relative; margin: 0 -16px; }
+.guest-hero svg { display: block; width: 100%; height: auto; }
+.guest-panel {
+  background: var(--surface); border-radius: var(--r-lg);
+  margin-top: -34px; position: relative; padding: 20px;
+  box-shadow: var(--shadow-lg); text-align: center;
+}
+.guest-panel h1 { font-size: 25px; }
+.guest-panel p { color: var(--ink-70); font-size: 14.5px; margin: 8px 0 0; }
+.info-card { padding: 16px 17px; margin-top: 13px; }
+.info-card .ic-head { display: flex; align-items: center; gap: 11px; margin-bottom: 9px; }
+.info-card .ic-ic {
+  width: 40px; height: 40px; border-radius: 14px; flex: none;
+  background: var(--accent-tint); display: grid; place-items: center; font-size: 19px;
+}
+.info-card h3 { font-size: 17px; }
+.info-card .body { font-size: 14px; color: var(--ink-70); margin: 0; white-space: pre-line; }
+.wifi-box {
+  background: var(--sand); border-radius: var(--r-sm);
+  padding: 13px 15px; display: flex; justify-content: space-between;
+  align-items: center; gap: 10px; margin-top: 4px;
+}
+.wifi-box .code { font-family: var(--font-display); font-size: 19px; font-weight: 700; }
+
+/* Delingsboks */
+.share {
+  padding: 18px; border-radius: var(--r);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; box-shadow: var(--shadow-lg);
+}
+.share h3 { color: #fff; font-size: 18px; }
+.share p { color: rgba(255, 255, 255, 0.85); font-size: 13.5px; margin: 4px 0 13px; }
+.share .link-row {
+  display: flex; gap: 8px; align-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px; padding: 6px 6px 6px 16px;
+}
+.share .url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; }
+.share .link-row button { background: #fff; color: var(--accent); padding: 9px 15px; border-radius: 999px; font-weight: 700; font-size: 13px; flex: none; }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: 96px; z-index: 99;
+  background: var(--ink); color: #fff;
+  padding: 11px 19px; border-radius: 999px;
+  font-size: 13.5px; font-weight: 700; box-shadow: var(--shadow-lg);
+  animation: toast-in 0.2s ease-out;
+}
+@media (min-width: 900px) { .toast { bottom: 32px; } }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+/* Flydende tilføj-knap */
+.fab {
+  position: fixed; right: 18px; bottom: calc(86px + env(safe-area-inset-bottom)); z-index: 45;
+  width: 56px; height: 56px; border-radius: 20px;
+  background: var(--accent); color: #fff; font-size: 26px;
+  display: grid; place-items: center; box-shadow: var(--shadow-lg);
+}
+@media (min-width: 900px) { .fab { bottom: 30px; right: 32px; } }
+
+/* Diverse */
+.stack { display: flex; flex-direction: column; gap: 13px; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.muted { color: var(--ink-45); font-size: 12.5px; }
+.center-note { text-align: center; color: var(--ink-45); font-size: 14px; padding: 18px 0 6px; }
+.searchbox { position: relative; margin-bottom: 10px; }
+.searchbox input { padding-left: 40px; border-radius: 999px; }
+.searchbox .s-ic { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
+/* Ekstra til single-file-udgaven */
+.modal-host:empty{display:none}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="modal-host" class="modal-host"></div>
+<script>
+"use strict";
+/* =========================================================
+   HytteKlar · single-file MVP (vanilla JS + localStorage)
+   Samme flow som BudgetBuddy: én fil, ingen build.
+   ========================================================= */
+
+/* ---------- Hjælpere ---------- */
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+const nowISO = () => new Date().toISOString();
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function formatShort(iso){ if(!iso) return ""; const d=new Date(iso.length===10?iso+"T00:00:00":iso); if(isNaN(d)) return iso; return d.toLocaleDateString("da-DK",{day:"numeric",month:"short"}); }
+function daysUntil(iso){ if(!iso) return null; const d=new Date(iso+"T00:00:00"); if(isNaN(d)) return null; const t=new Date(); t.setHours(0,0,0,0); return Math.round((d-t)/86400000); }
+function timeAgo(iso){ const ms=Date.now()-new Date(iso).getTime(); const m=Math.floor(ms/60000);
+  if(m<1) return "lige nu"; if(m<60) return m+" min siden"; const h=Math.floor(m/60);
+  if(h<24) return h+" t siden"; const d=Math.floor(h/24); if(d===1) return "i går"; if(d<30) return d+" dage siden"; return formatShort(iso); }
+
+/* ---------- Danske labels ---------- */
+const INV_STATUS = {in_stock:"Nok", low:"Lav beholdning", missing:"Mangler", check:"Skal tjekkes"};
+const INV_CAT = {food:"Madvarer", basic:"Basisvarer", kitchen:"Køkken", bathroom:"Toilet og bad", cleaning:"Rengøring", batteries_lights:"Batterier og pærer", first_aid:"Førstehjælp", outdoor:"Grill og udendørs", winter:"Vinterpraktisk", other:"Andet"};
+const INV_EMOJI = {food:"🥫", basic:"🧂", kitchen:"🍳", bathroom:"🧻", cleaning:"🧽", batteries_lights:"🔋", first_aid:"🩹", outdoor:"🔥", winter:"❄️", other:"📦"};
+const CLO_STATUS = {at_cabin:"Ligger i hytten", bring_next_time:"Skal medbringes", too_small:"For småt", needs_wash:"Skal vaskes", replace:"Skal udskiftes", missing:"Mangler"};
+const CLO_SEASON = {winter:"Vinter", summer:"Sommer", all_year:"Helår"};
+const TASK_STATUS = {open:"Åben", in_progress:"I gang", done:"Løst"};
+const TASK_PRIO = {low:"Lav", normal:"Normal", important:"Vigtig", critical:"Kritisk"};
+const TASK_CAT = {maintenance:"Vedligehold", shopping:"Indkøb", cleaning:"Rengøring", admin:"Administration", repair:"Reparation", guest:"Gæster", other:"Andet"};
+const EXP_STATUS = {want_to_try:"Vil prøve", tried:"Prøvet", favorite:"Favorit"};
+const EXP_STATUS_EMOJI = {want_to_try:"🎯", tried:"✅", favorite:"⭐"};
+const EXP_SEASON = {winter:"Vinter", summer:"Sommer", all_year:"Helår"};
+const EXP_CAT = {ski:"Ski", hiking:"Vandring", biking:"Cykling", food:"Mad og café", kids:"Børn", rainy_day:"Regnvejr", excursion:"Udflugt", swimming:"Badning", shopping:"Shopping", local_tip:"Lokalt tip", other:"Andet"};
+const EXP_EMOJI = {ski:"⛷️", hiking:"🥾", biking:"🚲", food:"🥐", kids:"🧒", rainy_day:"🌧️", excursion:"🚗", swimming:"🏊", shopping:"🛍️", local_tip:"💡", other:"✨"};
+const PRICE = {free:"Gratis", low:"kr", medium:"kr·kr", high:"kr·kr·kr"};
+const PERSON_COLORS = ["#5E7A9B","#6E8F68","#D07B4C","#B4523F","#8B7BA8","#4E8F8A"];
+
+/* ---------- Default-data ---------- */
+function makeChecklist(title, type, description, items){
+  return { id:uid(), title, type, description,
+    items: items.map((it,i)=>({id:uid(), text:it.t, isCompleted:false, isCritical:!!it.c, order:i})),
+    updatedAt: nowISO() };
+}
+function createDefaultDB(){
+  const t = nowISO();
+  return {
+    settings: { season:"winter", role:"owner", familyMembers:["Mor","Far","Barn 1","Barn 2"],
+      nextTrip:{ title:"Vinterferie i Kvitfjell", startDate:"2026-02-14", endDate:"2026-02-21", note:"6 personer · ski" } },
+    inventory: [
+      {id:uid(), name:"Kaffe (formalet)", category:"food", status:"missing", quantity:"Næsten tom", buyNextTime:true, updatedAt:t},
+      {id:uid(), name:"Toiletpapir", category:"bathroom", status:"low", quantity:"2 ruller", note:"2 pakker holder ca. en uge", buyNextTime:true, updatedAt:t},
+      {id:uid(), name:"Opvasketabs", category:"cleaning", status:"low", quantity:"6 stk.", buyNextTime:true, updatedAt:t},
+      {id:uid(), name:"Pasta og ris", category:"food", status:"in_stock", quantity:"God beholdning", buyNextTime:false, updatedAt:t},
+      {id:uid(), name:"Salt, sukker og olie", category:"basic", status:"in_stock", buyNextTime:false, updatedAt:t},
+      {id:uid(), name:"AA-batterier", category:"batteries_lights", status:"low", quantity:"4 stk.", note:"Til fjernbetjeninger og lygter", buyNextTime:true, updatedAt:t},
+      {id:uid(), name:"Reservepærer", category:"batteries_lights", status:"check", note:"Tjek loftlampen i stuen", buyNextTime:false, updatedAt:t},
+      {id:uid(), name:"Plaster og forbinding", category:"first_aid", status:"in_stock", buyNextTime:false, updatedAt:t},
+      {id:uid(), name:"Universalrengøring", category:"cleaning", status:"in_stock", buyNextTime:false, updatedAt:t},
+      {id:uid(), name:"Vejsalt / grus", category:"winter", status:"low", quantity:"1/2 spand", note:"Til trappe og indgang", buyNextTime:true, updatedAt:t},
+      {id:uid(), name:"Optændingsblokke", category:"outdoor", status:"missing", buyNextTime:true, updatedAt:t},
+      {id:uid(), name:"Grillkul", category:"outdoor", status:"in_stock", quantity:"1 pose", buyNextTime:false, updatedAt:t}
+    ],
+    clothing: [
+      {id:uid(), personName:"Mor", itemName:"Skitøj (jakke + bukser)", category:"Skitøj", season:"winter", size:"M", status:"at_cabin", updatedAt:t},
+      {id:uid(), personName:"Mor", itemName:"Uldundertøj", category:"Uld", season:"winter", size:"M · 2 sæt", status:"at_cabin", updatedAt:t},
+      {id:uid(), personName:"Mor", itemName:"Vandresko", category:"Sko", season:"summer", size:"39", status:"bring_next_time", updatedAt:t},
+      {id:uid(), personName:"Far", itemName:"Skitøj (jakke + bukser)", category:"Skitøj", season:"winter", size:"L", status:"at_cabin", updatedAt:t},
+      {id:uid(), personName:"Far", itemName:"Vandresko", category:"Sko", season:"summer", size:"44", status:"replace", note:"Sålen er slidt", updatedAt:t},
+      {id:uid(), personName:"Far", itemName:"Hjemmesko", category:"Sko", season:"all_year", size:"44", status:"at_cabin", updatedAt:t},
+      {id:uid(), personName:"Barn 1", itemName:"Flyverdragt", category:"Skitøj", season:"winter", size:"122", status:"too_small", note:"Skal være 128 nu", updatedAt:t},
+      {id:uid(), personName:"Barn 1", itemName:"Skistøvler", category:"Skiudstyr", season:"winter", size:"33", status:"too_small", updatedAt:t},
+      {id:uid(), personName:"Barn 1", itemName:"Uldundertøj", category:"Uld", season:"winter", size:"128", status:"at_cabin", updatedAt:t},
+      {id:uid(), personName:"Barn 2", itemName:"Skitøj", category:"Skitøj", season:"winter", size:"110", status:"at_cabin", updatedAt:t},
+      {id:uid(), personName:"Barn 2", itemName:"Regntøj", category:"Regntøj", season:"summer", size:"116", status:"missing", updatedAt:t},
+      {id:uid(), personName:"Barn 2", itemName:"Vinterstøvler", category:"Sko", season:"winter", size:"28", status:"at_cabin", updatedAt:t}
+    ],
+    checklists: [
+      makeChecklist("Før afrejse hjemmefra","before_leaving_home","Inden I kører fra Danmark.",[
+        {t:"Tjek lagerlisten for mangler"},{t:"Pak tøj og udstyr fra “Skal medbringes”"},{t:"Tjek vejrudsigt for Kvitfjell"},
+        {t:"Tjek rengøring og aftaler"},{t:"Husk nøgler og adgangskoder",c:1},{t:"Planlæg indkøb på vejen"}]),
+      makeChecklist("Ved ankomst","arrival","De første ting, når I når frem.",[
+        {t:"Tænd for vandet",c:1},{t:"Justér varmen"},{t:"Tjek wifi"},{t:"Tjek køleskab og basisvarer"},
+        {t:"Tjek om alt ser ok ud"},{t:"Notér mangler i Lager"},{t:"Opret opgaver, hvis noget er ødelagt"}]),
+      makeChecklist("Når man rejser fra hytten","departure","Så I ikke sidder i bilen og tvivler.",[
+        {t:"Sluk for vandet",c:1},{t:"Luk alle vinduer",c:1},{t:"Tøm køleskab for åbne madvarer"},{t:"Tag skrald ud"},
+        {t:"Sæt varmen på dvale-niveau",c:1},{t:"Sæt wifi-abonnement på pause"},{t:"Bestil rengøring"},
+        {t:"Tjek terrasse og udendørs ting"},{t:"Sluk relevante kontakter"},{t:"Lås alle døre",c:1},{t:"Tag evt. billeder af lejligheden"}]),
+      makeChecklist("Vintertur","winter_trip","Klar til sne og ski.",[
+        {t:"Tjek skitøj"},{t:"Tjek uldundertøj"},{t:"Tjek handsker og huer"},{t:"Tjek skibriller og hjelme"},
+        {t:"Tjek varmeindstilling"},{t:"Tjek snerydning og parkering"}]),
+      makeChecklist("Sommertur","summer_trip","Klar til fjeld og vandring.",[
+        {t:"Tjek vandretøj"},{t:"Tjek regntøj"},{t:"Tjek badetøj"},{t:"Tjek solcreme"},
+        {t:"Tjek grill og udendørsudstyr"},{t:"Tjek vandreruter og aktiviteter"}]),
+      makeChecklist("Gæster ankommer","guest_arrival","Gør klar til at låne hytten ud.",[
+        {t:"Send gæstelink"},{t:"Tjek at gæsteguiden er opdateret"},{t:"Tjek rengøring"},
+        {t:"Tjek sengetøj og håndklæder"},{t:"Tjek ankomstinformation"},{t:"Tjek kontaktinformation"}]),
+      makeChecklist("Rengøring og klargøring","cleaning","Hytten skinner til næste tur.",[
+        {t:"Støvsug og vask gulve"},{t:"Rengør badeværelset"},{t:"Skift sengetøj"},{t:"Tør køkkenborde af"},{t:"Tøm skraldespande"}])
+    ],
+    tasks: [
+      {id:uid(), title:"Tjek røgalarm i stuen", description:"Blinkede rødt sidst — muligvis batteriskift.", status:"open", priority:"critical", category:"maintenance", assignedTo:"Far", nextVisit:true, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Bestil rengøring til uge 8", description:"Kontakt Renhold Kvitfjell inden vinterferien.", status:"open", priority:"important", category:"admin", assignedTo:"Mor", dueDate:"2026-02-10", nextVisit:false, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Køb nyt skitøj til Barn 1", description:"Vokset ud af flyverdragten — str. 128 nu.", status:"in_progress", priority:"important", category:"shopping", assignedTo:"Mor", nextVisit:false, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Terrassedør binder", description:"Nederste hjørne skraber — skal justeres.", status:"open", priority:"normal", category:"repair", assignedTo:"Far", nextVisit:true, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Ny dørmåtte købt og lagt ud", status:"done", priority:"low", category:"shopping", assignedTo:"Far", nextVisit:false, createdAt:t, updatedAt:t}
+    ],
+    experiences: [
+      {id:uid(), title:"Kvitfjell Alpinanlegg", description:"Familievenlige nedfarter og skiskole for børn. Perfekt til en hel skidag.", category:"ski", season:"winter", childFriendly:true, priceLevel:"medium", location:"Kvitfjell", status:"favorite", visibleToGuests:true, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Vandretur til Varden", description:"Rolig rute med fin udsigt over dalen. Ca. 2 timer t/r.", category:"hiking", season:"summer", childFriendly:true, priceLevel:"free", location:"Kvitfjell vest", status:"want_to_try", visibleToGuests:true, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Fåvang café og bageri", description:"Hyggeligt stop med kanelboller og kaffe efter en tur på fjeldet.", category:"food", season:"all_year", childFriendly:true, priceLevel:"low", location:"Fåvang", status:"favorite", visibleToGuests:true, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Badeland i Lillehammer", description:"Redningen på en regnvejrsdag — rutsjebaner og varmt vand.", category:"rainy_day", season:"all_year", childFriendly:true, priceLevel:"medium", location:"Lillehammer", status:"tried", visibleToGuests:true, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Cykeltur langs Gudbrandsdalen", description:"Flad, landskabelig rute for hele familien. Lej cykler i Ringebu.", category:"biking", season:"summer", childFriendly:false, priceLevel:"medium", location:"Ringebu", status:"want_to_try", visibleToGuests:false, createdAt:t, updatedAt:t},
+      {id:uid(), title:"Kælkebakken ved hytten", description:"Kort gåtur, stor børnehygge. Kælke står i depotet.", category:"kids", season:"winter", childFriendly:true, priceLevel:"free", status:"tried", note:"Kun intern — kælkene er vores egne", visibleToGuests:false, createdAt:t, updatedAt:t}
+    ],
+    guestGuide: {
+      id:uid(),
+      welcomeTitle:"Velkommen til hytten i Kvitfjell",
+      welcomeText:"Så glade for, at I vil bruge hytten! Her finder I alt det praktiske. Spørg endelig, hvis noget driller — og god tur til fjeldet.",
+      address:"Fjellveien 12, 2634 Fåvang (Kvitfjell) · Nøgleboks ved døren, kode udleveres pr. sms",
+      parkingInfo:"Fælles p-plads foran bygningen, plads nr. 12. Ladestander ved indgang B.",
+      wifiName:"Hytten_Kvitfjell", wifiPassword:"Fjell2026!",
+      heatingInstructions:"Termostaten sidder i entréen — skru op til 22° ved ankomst. Gulvvarme på badet styres på panelet ved døren. Sæt ikke over 24°.",
+      waterInstructions:"Hovedhanen sidder i skabet under køkkenvasken. Den skal være åben under opholdet — luk den kun, hvis vi aftaler det ved afrejse.",
+      trashInstructions:"Restaffald i containeren ved p-pladsen. Pant og glas afleveres ved nærbutikken i Fåvang. Papir i den grønne beholder.",
+      houseRules:"Ingen sko indenfor · Ingen rygning · Ro efter kl. 22 · Kæledyr efter aftale · Efterlad hytten, som I selv vil finde den.",
+      cleaningInstructions:"Slutrengøring er bestilt — I skal bare rydde op og følge afrejselisten.",
+      departureInstructions:"Tag skrald ud\nKør opvaskemaskinen\nLæg brugt sengetøj i kurven\nLuk vinduer og lås døren\nLæg nøglen tilbage i boksen",
+      emergencyInfo:"Nødnummer (Norge): 112 · Lægevagt: 116 117 · Nærmeste sygehus: Lillehammer",
+      contactName:"Familien (ejere)", contactPhone:"+45 20 12 34 56", contactEmail:"hytten@example.dk",
+      shareEnabled:true, shareId:"kvitfjell-"+uid().slice(0,6), updatedAt:t
+    },
+    updates: [
+      {id:uid(), text:"Kaffe markeret som mangler", at:t, by:"Mor"},
+      {id:uid(), text:"Ny opgave: Tjek røgalarm i stuen", at:t, by:"Far"}
+    ]
+  };
+}
+
+/* ---------- Data-lag (localStorage) ---------- */
+const KEY = "hytteklar-db-v1";
+function load(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const p = JSON.parse(raw); const d = createDefaultDB();
+      return Object.assign(d, p, {settings: Object.assign(d.settings, p.settings)}); }
+  } catch(e){}
+  return createDefaultDB();
+}
+let db = load();
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e){} }
+function commit(fn){ fn(db); persist(); render(); }
+function logUpdate(text){
+  db.updates = [{id:uid(), text, at:nowISO(), by: db.settings.role==="owner"?"Ejer":"Familie"}, ...db.updates].slice(0,12);
+}
+
+/* ---------- UI-tilstand (ikke persisteret) ---------- */
+const ui = {
+  inv:{cat:"all", status:"all", q:""},
+  clo:{season:"all", status:"all"},
+  tasks:{prio:"all", cat:"all"},
+  exp:{season:"all", cat:"all", kids:false, q:""},
+  guestDone:{}
+};
+/* ---------- Toast & modal ---------- */
+let toastTimer;
+function toast(msg){
+  document.querySelectorAll(".toast").forEach(t=>t.remove());
+  const el = document.createElement("div");
+  el.className = "toast"; el.textContent = msg;
+  document.body.appendChild(el);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.remove(), 2100);
+}
+function openModal(html){
+  const host = document.getElementById("modal-host");
+  host.innerHTML = `<div class="modal-backdrop" onmousedown="if(event.target===this)closeModal()">
+    <div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  document.body.style.overflow = "hidden";
+  const first = host.querySelector("input,textarea,select"); if(first) first.focus();
+}
+function closeModal(){
+  document.getElementById("modal-host").innerHTML = "";
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
+const val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+const checked = id => { const el = document.getElementById(id); return el ? el.checked : false; };
+
+/* ---------- Fjeldpastel-landskaber (godkendt v2-design) ---------- */
+function heroScene(season){
+  const w = season==="winter";
+  const sky = w
+    ? `<stop offset="0" stop-color="#5E7A9B"/><stop offset="0.6" stop-color="#8FA8C4"/><stop offset="1" stop-color="#C9D8E8"/>`
+    : `<stop offset="0" stop-color="#7FA8B8"/><stop offset="0.55" stop-color="#B8D2D8"/><stop offset="1" stop-color="#E4EEDC"/>`;
+  const gid = "sky-"+(w?"w":"s");
+  const shadow = w ? "#C9D8E4" : "#9FB98C";
+  const deco = w
+    ? `<g fill="#fff" opacity="0.9"><circle cx="40" cy="58" r="2.4"/><circle cx="96" cy="46" r="1.9"/><circle cx="160" cy="60" r="2.4"/><circle cx="205" cy="88" r="1.9"/><circle cx="258" cy="60" r="2.2"/><circle cx="296" cy="118" r="1.9"/><circle cx="60" cy="128" r="1.9"/><circle cx="356" cy="96" r="2.2"/><circle cx="176" cy="130" r="1.7"/><circle cx="280" cy="160" r="1.7"/></g>`
+    : `<g><g transform="translate(150 250)"><circle r="3" fill="#E8A090"/><circle cx="22" cy="3" r="2.5" fill="#F0B98A"/><circle cx="44" cy="-1" r="3" fill="#fff"/><circle cx="66" cy="3" r="2.5" fill="#E8A090"/><circle cx="88" r="2.6" fill="#fff"/><circle cx="110" cy="3" r="2.4" fill="#F0B98A"/></g><path d="M244 96 q5 4 10 0 M260 104 q5 4 10 0" stroke="#5E6E5A" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.65"/></g>`;
+  const cabinExtra = w
+    ? `<path d="M34 0 v-8 h5 v12" fill="#6B4B33"/><path d="M39 -10 q4 -6 1 -10" stroke="#fff" stroke-width="2" fill="none" opacity="0.8" stroke-linecap="round"/>`
+    : `<path d="M-8 28 q4 -8 8 0M46 28 q4 -8 8 0" fill="#D98A5C"/>`;
+  return `<svg viewBox="0 0 392 262" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">${sky}</linearGradient></defs>
+  <rect width="392" height="262" fill="url(#${gid})"/>
+  <circle cx="324" cy="52" r="25" fill="${w?"#FDF6E8":"#FBE7AE"}" opacity="0.95"/>
+  <circle cx="324" cy="52" r="38" fill="${w?"#FDF6E8":"#FBE7AE"}" opacity="0.18"/>
+  <path d="M-20 262 L96 84 C104 72 118 72 126 84 L168 148 L204 106 C211 97 222 97 229 106 L340 250 L392 258 L392 262 Z" fill="${w?"#93A9C2":"#7C9884"}"/>
+  <path d="M96 84 C104 72 118 72 126 84 L144 111 L130 119 L111 104 L96 116 L85 103 Z" fill="${w?"#EDF3F8":"#EDF3F0"}"/>
+  <path d="M204 106 C211 97 222 97 229 106 L244 125 L231 131 L216 120 L205 129 L193 120 Z" fill="${w?"#EDF3F8":"#EDF3F0"}"/>
+  <path d="M-20 262 C40 198 140 190 220 214 C300 238 345 224 392 232 L392 262Z" fill="${w?"#C4D4E4":"#9CB98E"}"/>
+  <path d="M-20 262 C70 230 190 244 300 234 C348 230 378 236 392 238 L392 262Z" fill="${w?"#E9F0F5":"#C8DBB4"}"/>
+  <ellipse cx="86" cy="248" rx="34" ry="4.5" fill="${shadow}" opacity="0.7"/>
+  <g transform="translate(64 218)">
+    <path d="M0 28 h44 v-20 q-22 -18 -44 0 Z" fill="#8A5A3B"/>
+    <path d="M-4 10 Q22 -12 48 10 l-5 3 Q22 -6 1 13 Z" fill="${w?"#F4F8FB":"#6B4B33"}"/>
+    <rect x="17" y="14" width="11" height="14" rx="2" fill="#4A3526"/>
+    <rect x="6" y="12" width="7" height="7" rx="2" fill="#FBD9A0"/>
+    <rect x="32" y="12" width="7" height="7" rx="2" fill="#FBD9A0"/>
+    ${cabinExtra}
+  </g>
+  <ellipse cx="309" cy="244" rx="13" ry="3" fill="${shadow}" opacity="0.7"/>
+  <g transform="translate(300 214)"><path d="M0 26 q9 -26 18 0 Z" fill="${w?"#41615A":"#4E736A"}"/><path d="M2 15 q7 -20 14 0 Z" fill="${w?"#4E736A":"#5C8574"}"/><rect x="7.4" y="26" width="3.2" height="6" fill="#5A4433"/></g>
+  <ellipse cx="336" cy="250" rx="10" ry="2.5" fill="${shadow}" opacity="0.7"/>
+  <g transform="translate(330 228)"><path d="M0 19 q6 -19 12 0 Z" fill="${w?"#4E736A":"#5C8574"}"/><rect x="4.8" y="19" width="2.4" height="5" fill="#5A4433"/></g>
+  <ellipse cx="30" cy="252" rx="10" ry="2.5" fill="${shadow}" opacity="0.7"/>
+  <g transform="translate(24 230)"><path d="M0 19 q6 -19 12 0 Z" fill="${w?"#41615A":"#4E736A"}"/><rect x="4.8" y="19" width="2.4" height="5" fill="#5A4433"/></g>
+  ${deco}
+  </svg>`;
+}
+function miniScene(kind){
+  const map = { winter:["#CFDCE4","#9DB3BF","#7C97A6"], summer:["#D7E5D0","#9BBE93","#6E9B6A"],
+    wood:["#EAD9BE","#D3B98E","#B89468"], blue:["#D5E3EC","#A6C2D2","#7EA3B8"] };
+  const c = map[kind] || map.blue;
+  return `<svg viewBox="0 0 300 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="300" height="110" fill="${c[0]}"/>
+    <path d="M0 110 L70 45 L120 82 L180 36 L250 88 L300 60 L300 110Z" fill="${c[1]}"/>
+    <path d="M0 110 L60 74 L140 100 L210 68 L300 102 L300 110Z" fill="${c[2]}"/></svg>`;
+}
+function expSceneKind(e){
+  if(e.season==="winter") return "winter";
+  if(e.season==="summer") return "summer";
+  return (e.category==="food"||e.category==="shopping") ? "wood" : "blue";
+}
+
+/* ---------- Router & skelet ---------- */
+function route(){ const h = location.hash.replace(/^#/,""); return (h===""||h==="/") ? "/dashboard" : h; }
+function nav(path){ location.hash = path; }
+
+const NAV_MOBILE = [
+  {p:"/dashboard", l:"Hjem", e:"🏔️"}, {p:"/inventory", l:"Lager", e:"📦"},
+  {p:"/checklists", l:"Lister", e:"✅"}, {p:"/tasks", l:"Opgaver", e:"🔧"}, {p:"/more", l:"Mere", e:"✨"}
+];
+const NAV_SIDE = [
+  {p:"/dashboard", l:"Hjem", e:"🏔️"}, {p:"/inventory", l:"Lager", e:"📦"},
+  {p:"/checklists", l:"Checklister", e:"✅"}, {p:"/tasks", l:"Opgaver", e:"🔧"},
+  {p:"/experiences", l:"Oplevelser", e:"🧭"}, {p:"/clothing", l:"Tøj & udstyr", e:"🧥"},
+  {p:"/guest-guide", l:"Gæsteguide", e:"📖"}, {p:"/settings", l:"Indstillinger", e:"⚙️"}
+];
+function mobileActive(cur, p){
+  if(p==="/more") return ["/more","/experiences","/clothing","/guest-guide","/settings"].some(x=>cur.startsWith(x));
+  return cur.startsWith(p);
+}
+function shell(path, inner){
+  const season = db.settings.season;
+  return `<div class="app${season==="summer"?" season-summer":""}">
+  <header class="topbar">
+    <a class="brand" href="#/dashboard"><span class="logo">⛰️</span><span class="name">Hytte<b>Klar</b></span></a>
+    <div class="season-toggle" role="group" aria-label="Sæson">
+      <button type="button" class="${season==="winter"?"on":""}" onclick="setSeason('winter')">❄️ Vinter</button>
+      <button type="button" class="${season==="summer"?"on":""}" onclick="setSeason('summer')">☀️ Sommer</button>
+    </div>
+  </header>
+  <div class="body-wrap">
+    <nav class="sidebar" aria-label="Hovedmenu">
+      ${NAV_SIDE.map(n=>`<a href="#${n.p}" class="${path.startsWith(n.p)?"on":""}"><span>${n.e}</span>${n.l}</a>`).join("")}
+    </nav>
+    <main class="main"><div class="main-inner">${inner}</div></main>
+  </div>
+  <nav class="bottomnav" aria-label="Hovedmenu">
+    ${NAV_MOBILE.map(n=>`<a href="#${n.p}" class="${mobileActive(path,n.p)?"on":""}"><span class="ni">${n.e}</span><span class="nlbl">${n.l}</span></a>`).join("")}
+  </nav>
+</div>`;
+}
+function setSeason(s){ commit(d=>{ d.settings.season=s; }); toast(s==="winter"?"Skiftet til vintersæson ❄️":"Skiftet til sommersæson 🌿"); }
+
+function render(){
+  const path = route();
+  const root = document.getElementById("root");
+  const gm = path.match(/^\/guest\/([^/]+)$/);
+  if(gm){ root.innerHTML = renderGuest(decodeURIComponent(gm[1])); window.scrollTo(0,0); return; }
+  const cm = path.match(/^\/checklists\/(.+)$/);
+  let page;
+  if(path.startsWith("/inventory")) page = renderInventory();
+  else if(cm) page = renderChecklistDetail(decodeURIComponent(cm[1]));
+  else if(path.startsWith("/checklists")) page = renderChecklists();
+  else if(path.startsWith("/tasks")) page = renderTasks();
+  else if(path.startsWith("/clothing")) page = renderClothing();
+  else if(path.startsWith("/experiences")) page = renderExperiences();
+  else if(path.startsWith("/guest-guide")) page = renderGuestGuideEditor();
+  else if(path.startsWith("/settings")) page = renderSettings();
+  else if(path.startsWith("/more")) page = renderMore();
+  else page = renderDashboard();
+  root.innerHTML = shell(path, page);
+}
+window.addEventListener("hashchange", ()=>{ render(); window.scrollTo(0,0); });
+
+/* ---------- Genbrugte stumper ---------- */
+function chip(tone, label, onclick, title){
+  const click = onclick ? ` onclick="${onclick}" style="cursor:pointer"` : "";
+  const tag = onclick ? "button type=\"button\"" : "span";
+  const end = onclick ? "button" : "span";
+  return `<${tag} class="chip ${tone}"${click}${title?` title="${esc(title)}"`:""}><span class="dot"></span>${label}</${end}>`;
+}
+function emptyState(emoji, title, text){
+  return `<div class="empty"><div class="em-ic">${emoji}</div><h3>${esc(title)}</h3>${text?`<p>${esc(text)}</p>`:""}</div>`;
+}
+/* ---------- Dashboard ---------- */
+function renderDashboard(){
+  const s = db.settings, season = s.season;
+  const missing = db.inventory.filter(i=>i.status==="missing");
+  const low = db.inventory.filter(i=>i.status==="low");
+  const buyList = db.inventory.filter(i=>i.buyNextTime);
+  const openTasks = db.tasks.filter(t=>t.status!=="done");
+  const critical = openTasks.filter(t=>t.priority==="critical");
+  const departure = db.checklists.find(c=>c.type==="departure");
+  const arrival = db.checklists.find(c=>c.type==="arrival");
+  const depDone = departure ? departure.items.filter(i=>i.isCompleted).length : 0;
+  const depTotal = departure ? departure.items.length : 0;
+  const readiness = Math.max(15, Math.min(98, 100 - (missing.length*8 + low.length*4 + critical.length*12)));
+  const headline = readiness>=90 ? "Hytten er klar til jer" : readiness>=65 ? "Hytten ser næsten klar ud" : "Der er lidt at ordne før næste tur";
+  const subline = (missing.length+low.length)>0
+    ? `Der er ${buyList.length} ting, der skal købes${critical.length?" — og en kritisk opgave":""}.`
+    : critical.length ? "En kritisk opgave kræver opmærksomhed." : "Alt vigtigt er på plads — god tur til fjeldet!";
+  const trip = s.nextTrip;
+  const days = trip ? daysUntil(trip.startDate) : null;
+  let tripHtml = "";
+  if(trip){
+    const d = new Date(trip.startDate+"T00:00:00");
+    tripHtml = `<div class="sect"><h2>Næste tur</h2><a href="#/settings">Redigér →</a></div>
+    <div class="trip">
+      <div class="cal"><div class="m">${d.toLocaleDateString("da-DK",{month:"short"}).replace(".","").toUpperCase()}</div><div class="d">${d.getDate()}</div></div>
+      <div style="flex:1"><h3>${esc(trip.title)}</h3>
+      <p>${formatShort(trip.startDate)}${trip.endDate?"–"+formatShort(trip.endDate):""}${trip.note?" · "+esc(trip.note):""}${days!==null&&days>=0?` · om ${days} dage`:""}</p></div>
+    </div>`;
+  }
+  return `
+  <div class="hero">${heroScene(season)}
+    <div class="greet"><div class="hej">Hej familie 👋 · ${season==="winter"?"vinter":"sommer"} i Kvitfjell</div><h1>Hytten lige nu</h1></div>
+  </div>
+  <div class="card ready" style="margin-top:-38px;position:relative">
+    <div class="badge">${season==="winter"?"⛷️":"🥾"}</div>
+    <div style="flex:1"><h2>${headline}</h2><p>${subline}</p>
+      <div class="bar"><i style="width:${readiness}%"></i></div>
+      <div class="bar-lbl"><span>Klar til næste tur</span><span>${readiness}%</span></div>
+    </div>
+  </div>
+  <div class="tiles">
+    <a class="tile" href="#/inventory"><div class="em">🛒</div><div class="n" style="color:var(--red)">${missing.length}</div><div class="t">ting mangler</div></a>
+    <a class="tile" href="#/inventory"><div class="em">🧺</div><div class="n" style="color:var(--ochre)">${low.length}</div><div class="t">lav beholdning</div></a>
+    <a class="tile" href="#/tasks"><div class="em">🔧</div><div class="n" style="color:var(--blue)">${openTasks.length}</div><div class="t">åbne opgaver</div></a>
+    <a class="tile" href="#/tasks"><div class="em">⚠️</div><div class="n" style="color:var(--red)">${critical.length}</div><div class="t">kritiske opgaver</div></a>
+    <a class="tile" href="#${departure?"/checklists/"+departure.id:"/checklists"}"><div class="em">🧾</div><div class="n" style="color:var(--green)">${depTotal?depDone+"/"+depTotal:"–"}</div><div class="t">afrejse gjort</div></a>
+    <a class="tile" href="#/guest-guide"><div class="em">🔗</div><div class="n" style="color:${db.guestGuide.shareEnabled?"var(--green)":"var(--ink-45)"}">${db.guestGuide.shareEnabled?"Aktivt":"Fra"}</div><div class="t">gæstelink</div></a>
+  </div>
+  ${tripHtml}
+  <div class="sect"><h2>Kom hurtigt i gang</h2></div>
+  <div class="tiles" style="grid-template-columns:1fr 1fr;margin-top:0">
+    ${arrival?`<a class="tile" href="#/checklists/${arrival.id}"><div class="em">🔑</div><div class="n">Ankomst</div><div class="t">checklisten når I når frem</div></a>`:""}
+    ${departure?`<a class="tile" href="#/checklists/${departure.id}"><div class="em">🚗</div><div class="n">Afrejse</div><div class="t">checklisten før I kører hjem</div></a>`:""}
+  </div>
+  <div class="sect"><h2>Skal købes</h2><a href="#/inventory">Se lager →</a></div>
+  <div class="card list">
+    ${buyList.length===0
+      ? `<div class="empty" style="padding:22px 16px"><h3>Ingen mangler lige nu 🎉</h3><p>Lageret ser fint ud.</p></div>`
+      : buyList.slice(0,5).map(i=>`<div class="li">
+          <div class="ic">${INV_EMOJI[i.category]||"📦"}</div>
+          <div class="li-main"><div class="nm">${esc(i.name)}</div><div class="ct">${INV_CAT[i.category]||""}</div></div>
+          ${chip(i.status==="missing"?"bad":i.status==="low"?"warn":"neutral", INV_STATUS[i.status]||"")}
+        </div>`).join("")}
+  </div>
+  <div class="sect"><h2>Seneste opdateringer</h2></div>
+  <div class="card list">
+    ${db.updates.length===0
+      ? `<div class="empty" style="padding:22px 16px"><h3>Ingen aktivitet endnu</h3></div>`
+      : db.updates.slice(0,5).map(u=>`<div class="li">
+          <div class="ic" style="font-size:14px">📝</div>
+          <div class="li-main"><div class="nm" style="font-weight:600">${esc(u.text)}</div><div class="ct">${u.by?esc(u.by)+" · ":""}${timeAgo(u.at)}</div></div>
+        </div>`).join("")}
+  </div>
+  <div class="center-note">God tur til fjeldet 🏔️</div>`;
+}
+
+/* ---------- Lager ---------- */
+const INV_NEXT = {in_stock:"low", low:"missing", missing:"check", check:"in_stock"};
+const invTone = s => s==="in_stock"?"ok":s==="low"?"warn":s==="missing"?"bad":"info";
+
+function invFiltered(){
+  let list = db.inventory;
+  if(ui.inv.cat!=="all") list = list.filter(i=>i.category===ui.inv.cat);
+  if(ui.inv.status==="buy") list = list.filter(i=>i.buyNextTime);
+  else if(ui.inv.status!=="all") list = list.filter(i=>i.status===ui.inv.status);
+  if(ui.inv.q){ const q=ui.inv.q.toLowerCase(); list = list.filter(i=>i.name.toLowerCase().includes(q)); }
+  const w = {missing:0, low:1, check:2, in_stock:3};
+  return [...list].sort((a,b)=>w[a.status]-w[b.status]);
+}
+function invListHtml(){
+  const items = invFiltered();
+  if(items.length===0) return emptyState("🧺","Ingen varer her", ui.inv.q?"Prøv en anden søgning.":"Alt ser fint ud i denne visning.");
+  return items.map(i=>`<div class="li">
+    <div class="ic">${INV_EMOJI[i.category]||"📦"}</div>
+    <button type="button" class="li-main" style="text-align:left" onclick="invForm('${i.id}')" title="Redigér vare">
+      <div class="nm">${esc(i.name)}${i.buyNextTime?' <span title="Køb næste gang">🛒</span>':""}</div>
+      <div class="ct">${INV_CAT[i.category]||""}${i.quantity?" · "+esc(i.quantity):""}${i.note?" · "+esc(i.note):""} · ${timeAgo(i.updatedAt)}</div>
+    </button>
+    <div class="li-right">
+      ${chip(invTone(i.status), INV_STATUS[i.status]||"", `invCycle('${i.id}')`, "Tryk for at skifte status")}
+      <button type="button" class="muted" onclick="invBuy('${i.id}')">${i.buyNextTime?"Fjern fra indkøb":"+ Køb næste gang"}</button>
+    </div>
+  </div>`).join("");
+}
+function renderInventory(){
+  const buyCount = db.inventory.filter(i=>i.buyNextTime).length;
+  const sBtn = (key,label) => `<button type="button" class="fbtn${ui.inv.status===key?" on":""}" onclick="invSetStatus('${key}')">${label}</button>`;
+  const cBtn = (key,label) => `<button type="button" class="fbtn${ui.inv.cat===key?" on":""}" onclick="invSetCat('${key}')">${label}</button>`;
+  return `
+  <div class="page-head"><div class="eyebrow">Overblik</div><h1>Lager</h1>
+    <p>Så I aldrig ankommer uden kaffe eller toiletpapir. ${buyCount>0?buyCount+" ting er markeret til næste indkøb.":"Alt ser fint ud."}</p></div>
+  <div class="searchbox"><span class="s-ic">🔍</span>
+    <input id="inv-q" placeholder="Søg efter vare…" value="${esc(ui.inv.q)}" oninput="invSearch(this.value)" aria-label="Søg efter vare"></div>
+  <div class="filters">
+    ${sBtn("all","Alle")}${sBtn("buy","🛒 Køb næste gang")}
+    ${Object.keys(INV_STATUS).map(k=>sBtn(k, INV_STATUS[k])).join("")}
+  </div>
+  <div class="filters">
+    ${cBtn("all","Alle kategorier")}
+    ${Object.keys(INV_CAT).map(k=>cBtn(k, (INV_EMOJI[k]||"")+" "+INV_CAT[k])).join("")}
+  </div>
+  <div class="card list" id="inv-list" style="margin-top:4px">${invListHtml()}</div>
+  <button type="button" class="fab" onclick="invForm()" aria-label="Tilføj vare">+</button>`;
+}
+function invSearch(v){ ui.inv.q = v; const el=document.getElementById("inv-list"); if(el) el.innerHTML = invListHtml(); }
+function invSetStatus(k){ ui.inv.status = (ui.inv.status===k && k!=="all") ? "all" : k; render(); }
+function invSetCat(k){ ui.inv.cat = (ui.inv.cat===k && k!=="all") ? "all" : k; render(); }
+function invCycle(id){ commit(d=>{ const i=d.inventory.find(x=>x.id===id); if(i){ i.status=INV_NEXT[i.status]||"in_stock"; i.updatedAt=nowISO(); } }); }
+function invBuy(id){ const i=db.inventory.find(x=>x.id===id); const was=i&&i.buyNextTime;
+  commit(d=>{ const x=d.inventory.find(y=>y.id===id); if(x){ x.buyNextTime=!x.buyNextTime; x.updatedAt=nowISO(); } });
+  toast(was?"Fjernet fra indkøb":"Sat på indkøbslisten 🛒"); }
+function invForm(id){
+  const item = id ? db.inventory.find(i=>i.id===id) : null;
+  openModal(`<h2>${item?"Redigér vare":"Tilføj vare"}</h2>
+  <div class="field"><label>Navn</label><input id="f-name" value="${esc(item?item.name:"")}" placeholder="Fx kaffe, toiletpapir…"></div>
+  <div class="field-row">
+    <div class="field"><label>Kategori</label><select id="f-cat">${Object.keys(INV_CAT).map(k=>`<option value="${k}"${item&&item.category===k?" selected":""}>${INV_CAT[k]}</option>`).join("")}</select></div>
+    <div class="field"><label>Status</label><select id="f-status">${Object.keys(INV_STATUS).map(k=>`<option value="${k}"${item&&item.status===k?" selected":""}>${INV_STATUS[k]}</option>`).join("")}</select></div>
+  </div>
+  <div class="field"><label>Antal / mængde (fri tekst)</label><input id="f-qty" value="${esc(item?item.quantity||"":"")}" placeholder="Fx 2 ruller, halv pose…"></div>
+  <div class="field"><label>Note</label><input id="f-note" value="${esc(item?item.note||"":"")}" placeholder="Valgfri note"></div>
+  <label class="check-line"><input type="checkbox" id="f-buy"${item&&item.buyNextTime?" checked":""}> Køb næste gang 🛒</label>
+  <div class="modal-actions">
+    ${item?`<button type="button" class="btn danger" onclick="invDelete('${item.id}')">Slet</button>`:""}
+    <button type="button" class="btn ghost" onclick="closeModal()">Annullér</button>
+    <button type="button" class="btn" onclick="invSave('${item?item.id:""}')">Gem</button>
+  </div>`);
+}
+function invSave(id){
+  const name = val("f-name"); if(!name){ toast("Giv varen et navn"); return; }
+  commit(d=>{
+    const data = { name, category:val("f-cat")||"other", status:val("f-status")||"in_stock",
+      quantity:val("f-qty")||undefined, note:val("f-note")||undefined, buyNextTime:checked("f-buy"), updatedAt:nowISO() };
+    if(id){ const i=d.inventory.find(x=>x.id===id); if(i) Object.assign(i, data); }
+    else d.inventory.unshift(Object.assign({id:uid()}, data));
+    logUpdate((id?"Opdaterede":"Tilføjede")+" vare: "+name);
+  });
+  closeModal(); toast(id?"Varen er opdateret":"Varen er tilføjet");
+}
+function invDelete(id){
+  const i = db.inventory.find(x=>x.id===id);
+  commit(d=>{ d.inventory = d.inventory.filter(x=>x.id!==id); if(i) logUpdate("Slettede vare: "+i.name); });
+  closeModal(); toast("Varen er slettet");
+}
+/* ---------- Checklister ---------- */
+const CHK_EMOJI = {before_leaving_home:"🏠", arrival:"🔑", departure:"🚗", winter_trip:"❄️", summer_trip:"☀️", guest_arrival:"🤝", cleaning:"🧽"};
+function chkProgress(c){ const done=c.items.filter(i=>i.isCompleted).length; const total=c.items.length;
+  return {done, total, pct: total?Math.round(done/total*100):0}; }
+
+function renderChecklists(){
+  const season = db.settings.season;
+  const boost = c => ((season==="winter"&&c.type==="winter_trip")||(season==="summer"&&c.type==="summer_trip")) ? -1 : 0;
+  const sorted = [...db.checklists].sort((a,b)=>boost(a)-boost(b));
+  return `
+  <div class="page-head"><div class="eyebrow">Tryghed</div><h1>Checklister</h1>
+    <p>Så I ikke sidder i bilen og tænker: “Huskede vi at slukke vandet?”</p></div>
+  <div class="stack">
+    ${sorted.map(c=>{ const p=chkProgress(c);
+      const seasonal = c.type==="winter_trip"?"❄️ Vinter":c.type==="summer_trip"?"☀️ Sommer":null;
+      return `<a class="card" href="#/checklists/${c.id}" style="padding:15px 16px;display:flex;gap:13px;align-items:center">
+        <div style="width:46px;height:46px;border-radius:16px;background:var(--accent-tint);display:grid;place-items:center;font-size:21px;flex:none">${CHK_EMOJI[c.type]||"✅"}</div>
+        <div style="flex:1;min-width:0"><h3 style="font-size:16.5px">${esc(c.title)}</h3>
+          <div class="muted">${p.done} af ${p.total} klaret${seasonal?" · "+seasonal:""}${p.pct===100&&c.lastCompletedAt?" · færdig "+timeAgo(c.lastCompletedAt):""}</div>
+          <div class="mini-bar" style="max-width:220px"><i style="width:${p.pct}%"></i></div>
+        </div><span style="color:var(--ink-45);font-size:18px">›</span></a>`; }).join("")}
+  </div>`;
+}
+function renderChecklistDetail(id){
+  const c = db.checklists.find(x=>x.id===id);
+  if(!c) return `<div class="page-head"><h1>Checklisten findes ikke</h1><p><a href="#/checklists" style="color:var(--accent);font-weight:700">← Tilbage til checklister</a></p></div>`;
+  const p = chkProgress(c);
+  const items = [...c.items].sort((a,b)=>a.order-b.order);
+  return `
+  <div class="page-head" style="display:flex;gap:12px;align-items:flex-start">
+    <a href="#/checklists" class="card" style="width:42px;height:42px;display:grid;place-items:center;border-radius:14px;flex:none;font-size:18px" aria-label="Tilbage">←</a>
+    <div><h1 style="font-size:24px">${esc(c.title)}</h1>${c.description?`<p style="margin-top:3px">${esc(c.description)}</p>`:""}</div>
+  </div>
+  <div class="card pad">
+    <div class="row-between"><span style="font-weight:700;font-size:14px">${p.done} af ${p.total} klaret</span>
+      <button type="button" class="btn ghost sm" onclick="chkReset('${c.id}')">Nulstil til næste tur</button></div>
+    <div class="bar" style="margin-top:10px"><i style="width:${p.pct}%"></i></div>
+  </div>
+  <div class="card list" style="margin-top:13px">
+    ${items.map(it=>`<div class="chk-row${it.isCompleted?" done":""}" onclick="chkToggle('${c.id}','${it.id}')" role="checkbox" aria-checked="${it.isCompleted}" tabindex="0"
+        onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();chkToggle('${c.id}','${it.id}')}">
+      <div class="chk-box">${it.isCompleted?"✓":""}</div>
+      <span class="txt">${esc(it.text)}</span>
+      ${it.isCritical?'<span class="crit">Vigtig</span>':""}
+      <button type="button" class="muted" style="flex:none" onclick="event.stopPropagation();chkItemForm('${c.id}','${it.id}')" aria-label="Redigér punkt">✏️</button>
+    </div>`).join("")}
+  </div>
+  <button type="button" class="btn soft block" style="margin-top:13px" onclick="chkItemForm('${c.id}')">+ Tilføj punkt</button>
+  ${p.pct===100?'<div class="center-note">Alt klaret — god tur! 🏔️</div>':""}`;
+}
+function chkToggle(cid, iid){
+  commit(d=>{ const c=d.checklists.find(x=>x.id===cid); if(!c) return;
+    const it=c.items.find(x=>x.id===iid); if(!it) return;
+    it.isCompleted=!it.isCompleted; c.updatedAt=nowISO();
+    if(c.items.length && c.items.every(x=>x.isCompleted)) c.lastCompletedAt=nowISO(); });
+}
+function chkReset(cid){
+  commit(d=>{ const c=d.checklists.find(x=>x.id===cid); if(!c) return;
+    c.items.forEach(i=>i.isCompleted=false); c.updatedAt=nowISO(); logUpdate(`Nulstillede checklisten “${c.title}”`); });
+  toast("Checklisten er nulstillet til næste tur");
+}
+function chkItemForm(cid, iid){
+  const c = db.checklists.find(x=>x.id===cid); if(!c) return;
+  const it = iid ? c.items.find(x=>x.id===iid) : null;
+  openModal(`<h2>${it?"Redigér punkt":"Tilføj punkt"}</h2>
+  <div class="field"><label>Tekst</label><input id="f-text" value="${esc(it?it.text:"")}" placeholder="Fx sluk for vandet"></div>
+  <label class="check-line"><input type="checkbox" id="f-crit"${it&&it.isCritical?" checked":""}> Markér som vigtig/kritisk</label>
+  <div class="modal-actions">
+    ${it?`<button type="button" class="btn danger" onclick="chkItemDelete('${cid}','${it.id}')">Slet</button>`:""}
+    <button type="button" class="btn ghost" onclick="closeModal()">Annullér</button>
+    <button type="button" class="btn" onclick="chkItemSave('${cid}','${it?it.id:""}')">Gem</button>
+  </div>`);
+}
+function chkItemSave(cid, iid){
+  const text = val("f-text"); if(!text){ toast("Skriv en tekst"); return; }
+  const crit = checked("f-crit");
+  commit(d=>{ const c=d.checklists.find(x=>x.id===cid); if(!c) return;
+    if(iid){ const it=c.items.find(x=>x.id===iid); if(it){ it.text=text; it.isCritical=crit; } }
+    else c.items.push({id:uid(), text, isCompleted:false, isCritical:crit, order:c.items.length});
+    c.updatedAt=nowISO(); });
+  closeModal(); toast(iid?"Punktet er opdateret":"Punktet er tilføjet");
+}
+function chkItemDelete(cid, iid){
+  commit(d=>{ const c=d.checklists.find(x=>x.id===cid); if(!c) return;
+    c.items=c.items.filter(x=>x.id!==iid); c.updatedAt=nowISO(); });
+  closeModal(); toast("Punktet er slettet");
+}
+
+/* ---------- Opgaver ---------- */
+const PRIO_COLOR = {low:"#c9c2b4", normal:"var(--blue-2)", important:"var(--ochre)", critical:"var(--red)"};
+function renderTasks(){
+  const pBtn = (k,l) => `<button type="button" class="fbtn${ui.tasks.prio===k?" on":""}" onclick="taskSetPrio('${k}')">${l}</button>`;
+  const cBtn = (k,l) => `<button type="button" class="fbtn${ui.tasks.cat===k?" on":""}" onclick="taskSetCat('${k}')">${l}</button>`;
+  let list = db.tasks;
+  if(ui.tasks.prio!=="all") list = list.filter(t=>t.priority===ui.tasks.prio);
+  if(ui.tasks.cat!=="all") list = list.filter(t=>t.category===ui.tasks.cat);
+  const w = {critical:0, important:1, normal:2, low:3};
+  list = [...list].sort((a,b)=>w[a.priority]-w[b.priority]);
+  const col = status => {
+    const items = list.filter(t=>t.status===status);
+    return `<div><div class="kc-head">${TASK_STATUS[status]}<span class="count">${items.length}</span></div>
+      ${items.length===0 ? `<div class="card">${emptyState("🌤️","Ingenting her","Roligt og godt.")}</div>`
+        : items.map(t=>`<div class="card task">
+          <div class="prio" style="background:${PRIO_COLOR[t.priority]}"></div>
+          <div style="flex:1;min-width:0">
+            <button type="button" style="text-align:left;display:block;width:100%" onclick="taskForm('${t.id}')">
+              <h3>${esc(t.title)}</h3>${t.description?`<p class="desc">${esc(t.description)}</p>`:""}
+            </button>
+            <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+              <span class="tag">${TASK_CAT[t.category]||""}</span>
+              <span class="tag"${t.priority==="critical"?' style="background:var(--red-tint);color:var(--red)"':t.priority==="important"?' style="background:var(--ochre-tint);color:#a16a1f"':""}>${TASK_PRIO[t.priority]||""}</span>
+              ${t.nextVisit?'<span class="tag">📍 Næste gang</span>':""}
+              ${t.dueDate?`<span class="tag">🗓️ ${formatShort(t.dueDate)}</span>`:""}
+            </div>
+            <div class="foot"><span class="muted">${t.assignedTo?"👤 "+esc(t.assignedTo):""}</span>
+              ${t.status!=="done"
+                ? `<div style="display:flex;gap:7px">
+                    ${t.status==="open"?`<button type="button" class="btn soft sm" onclick="taskStatus('${t.id}','in_progress')">Start</button>`:""}
+                    <button type="button" class="btn sm" onclick="taskStatus('${t.id}','done')">Løst ✓</button></div>`
+                : `<button type="button" class="btn ghost sm" onclick="taskStatus('${t.id}','open')">Genåbn</button>`}
+            </div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+  };
+  return `
+  <div class="page-head"><div class="eyebrow">Intern liste</div><h1>Opgaver</h1>
+    <p>Alt der skal fixes, købes eller huskes mellem turene — i stedet for løse sms’er.</p></div>
+  <div class="filters">${pBtn("all","Alle prioriteter")}${Object.keys(TASK_PRIO).map(k=>pBtn(k,TASK_PRIO[k])).join("")}</div>
+  <div class="filters">${cBtn("all","Alle kategorier")}${Object.keys(TASK_CAT).map(k=>cBtn(k,TASK_CAT[k])).join("")}</div>
+  <div class="kanban" style="margin-top:6px">${col("open")}${col("in_progress")}${col("done")}</div>
+  <button type="button" class="fab" onclick="taskForm()" aria-label="Tilføj opgave">+</button>`;
+}
+function taskSetPrio(k){ ui.tasks.prio = (ui.tasks.prio===k&&k!=="all")?"all":k; render(); }
+function taskSetCat(k){ ui.tasks.cat = (ui.tasks.cat===k&&k!=="all")?"all":k; render(); }
+function taskStatus(id, status){
+  commit(d=>{ const t=d.tasks.find(x=>x.id===id); if(t){ t.status=status; t.updatedAt=nowISO();
+    if(status==="done") logUpdate("Opgave løst: "+t.title); } });
+  if(status==="done") toast("Opgaven er løst ✅");
+}
+function taskForm(id){
+  const t = id ? db.tasks.find(x=>x.id===id) : null;
+  openModal(`<h2>${t?"Redigér opgave":"Ny opgave"}</h2>
+  <div class="field"><label>Titel</label><input id="f-title" value="${esc(t?t.title:"")}" placeholder="Fx tjek røgalarm"></div>
+  <div class="field"><label>Beskrivelse</label><textarea id="f-desc" rows="2" placeholder="Valgfri">${esc(t?t.description||"":"")}</textarea></div>
+  <div class="field-row">
+    <div class="field"><label>Prioritet</label><select id="f-prio">${Object.keys(TASK_PRIO).map(k=>`<option value="${k}"${(t?t.priority:"normal")===k?" selected":""}>${TASK_PRIO[k]}</option>`).join("")}</select></div>
+    <div class="field"><label>Kategori</label><select id="f-cat">${Object.keys(TASK_CAT).map(k=>`<option value="${k}"${(t?t.category:"maintenance")===k?" selected":""}>${TASK_CAT[k]}</option>`).join("")}</select></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Ansvarlig</label><input id="f-who" value="${esc(t?t.assignedTo||"":"")}" placeholder="Fx Mor" list="hk-members">
+      <datalist id="hk-members">${db.settings.familyMembers.map(m=>`<option value="${esc(m)}">`).join("")}</datalist></div>
+    <div class="field"><label>Deadline</label><input type="date" id="f-due" value="${t&&t.dueDate?t.dueDate:""}"></div>
+  </div>
+  <label class="check-line"><input type="checkbox" id="f-next"${t&&t.nextVisit?" checked":""}> Skal klares “næste gang” i hytten 📍</label>
+  <div class="modal-actions">
+    ${t?`<button type="button" class="btn danger" onclick="taskDelete('${t.id}')">Slet</button>`:""}
+    <button type="button" class="btn ghost" onclick="closeModal()">Annullér</button>
+    <button type="button" class="btn" onclick="taskSave('${t?t.id:""}')">Gem</button>
+  </div>`);
+}
+function taskSave(id){
+  const title = val("f-title"); if(!title){ toast("Giv opgaven en titel"); return; }
+  commit(d=>{
+    const data = { title, description:val("f-desc")||undefined, priority:val("f-prio")||"normal",
+      category:val("f-cat")||"other", assignedTo:val("f-who")||undefined, dueDate:val("f-due")||undefined,
+      nextVisit:checked("f-next"), updatedAt:nowISO() };
+    if(id){ const t=d.tasks.find(x=>x.id===id); if(t) Object.assign(t, data); }
+    else d.tasks.unshift(Object.assign({id:uid(), status:"open", createdAt:nowISO()}, data));
+    logUpdate((id?"Opdaterede":"Ny")+" opgave: "+title);
+  });
+  closeModal(); toast(id?"Opgaven er opdateret":"Opgaven er oprettet");
+}
+function taskDelete(id){
+  commit(d=>{ d.tasks = d.tasks.filter(x=>x.id!==id); });
+  closeModal(); toast("Opgaven er slettet");
+}
+/* ---------- Tøj & udstyr ---------- */
+const cloTone = s => s==="at_cabin"?"ok":s==="bring_next_time"?"info":s==="missing"?"bad":s==="needs_wash"?"neutral":"warn";
+function renderClothing(){
+  const sBtn = (k,l) => `<button type="button" class="fbtn${ui.clo.season===k?" on":""}" onclick="cloSetSeason('${k}')">${l}</button>`;
+  const stBtn = (k,l) => `<button type="button" class="fbtn${ui.clo.status===k?" on":""}" onclick="cloSetStatus('${k}')">${l}</button>`;
+  const persons = [...new Set([...db.settings.familyMembers, ...db.clothing.map(c=>c.personName)])];
+  let filtered = db.clothing;
+  if(ui.clo.season!=="all") filtered = filtered.filter(c=>c.season===ui.clo.season||c.season==="all_year");
+  if(ui.clo.status!=="all") filtered = filtered.filter(c=>c.status===ui.clo.status);
+  const bring = db.clothing.filter(c=>c.status==="bring_next_time");
+  const seasonIcon = k => k==="winter"?"❄️":k==="summer"?"☀️":"🔁";
+  return `
+  <div class="page-head"><div class="eyebrow">Intern familiesektion</div><h1>Tøj & udstyr</h1>
+    <p>Pak smartere og undgå at slæbe alt frem og tilbage — særligt når børnene vokser ud af skitøj og støvler.</p></div>
+  <div class="filters">${sBtn("all","Alle sæsoner")}${Object.keys(CLO_SEASON).map(k=>sBtn(k, seasonIcon(k)+" "+CLO_SEASON[k])).join("")}</div>
+  <div class="filters">${stBtn("all","Alle statusser")}${Object.keys(CLO_STATUS).map(k=>stBtn(k, CLO_STATUS[k])).join("")}</div>
+  ${bring.length>0 && ui.clo.status==="all" ? `
+    <div class="sect"><h2>Skal medbringes næste gang 🎒</h2></div>
+    <div class="card list">${bring.map(c=>`<div class="li"><div class="ic">🎒</div>
+      <div class="li-main"><div class="nm">${esc(c.itemName)}</div><div class="ct">${esc(c.personName)}${c.size?" · str. "+esc(c.size):""}</div></div>
+      ${chip("info","Skal medbringes")}</div>`).join("")}</div>` : ""}
+  <div class="stack" style="margin-top:18px">
+    ${persons.map((person,idx)=>{
+      const items = filtered.filter(c=>c.personName===person);
+      const attention = db.clothing.filter(c=>c.personName===person && c.status!=="at_cabin").length;
+      return `<div class="card" style="padding:15px 16px">
+        <div class="row-between" style="margin-bottom:${items.length?8:0}px">
+          <div style="display:flex;align-items:center;gap:11px">
+            <div class="p-av" style="background:${PERSON_COLORS[idx%PERSON_COLORS.length]}">${esc(person.slice(0,1))}</div>
+            <div><h3 style="font-size:17px">${esc(person)}</h3>
+            <div class="muted">${attention===0?"Alt i orden":attention+" ting kræver opmærksomhed"}</div></div>
+          </div>
+        </div>
+        ${items.length===0 ? '<div class="muted" style="padding:6px 0 2px">Ingen ting i denne visning.</div>'
+          : items.map(c=>`<button type="button" class="li" style="width:100%;text-align:left;padding:11px 2px;background:none" onclick="cloForm('${c.id}')">
+            <div class="li-main"><div class="nm" style="font-weight:600">${esc(c.itemName)}</div>
+            <div class="ct">${CLO_SEASON[c.season]||""}${c.size?" · str. "+esc(c.size):""}${c.note?" · "+esc(c.note):""}</div></div>
+            ${chip(cloTone(c.status), CLO_STATUS[c.status]||"")}</button>`).join("")}
+      </div>`; }).join("")}
+    ${persons.length===0?`<div class="card">${emptyState("🧥","Ingen personer endnu","Tilføj tøj og udstyr for at komme i gang.")}</div>`:""}
+  </div>
+  <button type="button" class="fab" onclick="cloForm()" aria-label="Tilføj tøj eller udstyr">+</button>`;
+}
+function cloSetSeason(k){ ui.clo.season=(ui.clo.season===k&&k!=="all")?"all":k; render(); }
+function cloSetStatus(k){ ui.clo.status=(ui.clo.status===k&&k!=="all")?"all":k; render(); }
+function cloForm(id){
+  const c = id ? db.clothing.find(x=>x.id===id) : null;
+  const persons = [...new Set([...db.settings.familyMembers, ...db.clothing.map(x=>x.personName)])];
+  openModal(`<h2>${c?"Redigér tøj/udstyr":"Tilføj tøj/udstyr"}</h2>
+  <div class="field-row">
+    <div class="field"><label>Person</label><input id="f-person" value="${esc(c?c.personName:persons[0]||"")}" placeholder="Fx Mor, Barn 1…" list="hk-persons">
+      <datalist id="hk-persons">${persons.map(p=>`<option value="${esc(p)}">`).join("")}</datalist></div>
+    <div class="field"><label>Sæson</label><select id="f-season">${Object.keys(CLO_SEASON).map(k=>`<option value="${k}"${(c?c.season:"winter")===k?" selected":""}>${CLO_SEASON[k]}</option>`).join("")}</select></div>
+  </div>
+  <div class="field"><label>Ting</label><input id="f-item" value="${esc(c?c.itemName:"")}" placeholder="Fx flyverdragt, uldundertøj…"></div>
+  <div class="field-row">
+    <div class="field"><label>Type/kategori</label><input id="f-type" value="${esc(c?c.category:"Tøj")}" placeholder="Fx Skitøj, Sko…"></div>
+    <div class="field"><label>Størrelse</label><input id="f-size" value="${esc(c?c.size||"":"")}" placeholder="Fx 128, M…"></div>
+  </div>
+  <div class="field"><label>Status</label><select id="f-status">${Object.keys(CLO_STATUS).map(k=>`<option value="${k}"${(c?c.status:"at_cabin")===k?" selected":""}>${CLO_STATUS[k]}</option>`).join("")}</select></div>
+  <div class="field"><label>Note</label><input id="f-note" value="${esc(c?c.note||"":"")}" placeholder="Valgfri note"></div>
+  <div class="modal-actions">
+    ${c?`<button type="button" class="btn danger" onclick="cloDelete('${c.id}')">Slet</button>`:""}
+    <button type="button" class="btn ghost" onclick="closeModal()">Annullér</button>
+    <button type="button" class="btn" onclick="cloSave('${c?c.id:""}')">Gem</button>
+  </div>`);
+}
+function cloSave(id){
+  const itemName = val("f-item"), personName = val("f-person");
+  if(!itemName || !personName){ toast("Udfyld person og ting"); return; }
+  commit(d=>{
+    const data = { personName, itemName, category:val("f-type")||"Tøj", season:val("f-season")||"winter",
+      size:val("f-size")||undefined, status:val("f-status")||"at_cabin", note:val("f-note")||undefined, updatedAt:nowISO() };
+    if(id){ const c=d.clothing.find(x=>x.id===id); if(c) Object.assign(c, data); }
+    else d.clothing.unshift(Object.assign({id:uid()}, data));
+    logUpdate((id?"Opdaterede":"Tilføjede")+" tøj/udstyr: "+itemName);
+  });
+  closeModal(); toast(id?"Opdateret":"Tilføjet");
+}
+function cloDelete(id){
+  commit(d=>{ d.clothing = d.clothing.filter(x=>x.id!==id); });
+  closeModal(); toast("Slettet");
+}
+
+/* ---------- Oplevelser ---------- */
+const EXP_NEXT = {want_to_try:"tried", tried:"favorite", favorite:"want_to_try"};
+function expFiltered(){
+  let l = db.experiences;
+  if(ui.exp.season!=="all") l = l.filter(e=>e.season===ui.exp.season||e.season==="all_year");
+  if(ui.exp.cat!=="all") l = l.filter(e=>e.category===ui.exp.cat);
+  if(ui.exp.kids) l = l.filter(e=>e.childFriendly);
+  if(ui.exp.q){ const q=ui.exp.q.toLowerCase();
+    l = l.filter(e=>e.title.toLowerCase().includes(q)||(e.description||"").toLowerCase().includes(q)||(e.location||"").toLowerCase().includes(q)); }
+  const w = {favorite:0, want_to_try:1, tried:2};
+  return [...l].sort((a,b)=>w[a.status]-w[b.status]);
+}
+function expCard(e){
+  return `<div class="exp">
+    <div class="exp-img">${miniScene(expSceneKind(e))}
+      <div style="position:absolute;top:10px;left:10px"><span class="tag" style="background:rgba(255,255,255,0.92)">${EXP_EMOJI[e.category]||""} ${EXP_CAT[e.category]||""}</span></div>
+      <div style="position:absolute;top:10px;right:10px">
+        ${chip(e.status==="favorite"?"warn":e.status==="tried"?"ok":"info", (EXP_STATUS_EMOJI[e.status]||"")+" "+(EXP_STATUS[e.status]||""), `expCycle('${e.id}')`, "Tryk for at skifte status")}
+      </div>
+    </div>
+    <div class="exp-body">
+      <button type="button" style="text-align:left" onclick="expForm('${e.id}')"><h3>${esc(e.title)}</h3></button>
+      ${e.description?`<p class="desc">${esc(e.description)}</p>`:""}
+      <div class="tags">
+        <span class="tag">${EXP_SEASON[e.season]||""}</span>
+        ${e.childFriendly?'<span class="tag">🧒 Børnevenlig</span>':""}
+        ${e.priceLevel?`<span class="tag">${PRICE[e.priceLevel]||""}</span>`:""}
+        ${e.location?`<span class="tag">📍 ${esc(e.location)}</span>`:""}
+      </div>
+      <div class="row-between" style="margin-top:2px">
+        <button type="button" class="muted" onclick="expGuestToggle('${e.id}')">${e.visibleToGuests?"👁️ Vises for gæster":"🚫 Skjult for gæster"}</button>
+        ${e.link?`<a href="${esc(e.link)}" target="_blank" rel="noreferrer" style="color:var(--accent);font-weight:700;font-size:13px">Link ↗</a>`:""}
+      </div>
+    </div>
+  </div>`;
+}
+function expListHtml(){
+  const list = expFiltered();
+  if(list.length===0) return `<div class="card">${emptyState("🧭","Ingen oplevelser her", ui.exp.q?"Prøv en anden søgning.":"Tilføj jeres første idé med + knappen.")}</div>`;
+  return `<div class="exp-grid">${list.map(expCard).join("")}</div>`;
+}
+function renderExperiences(){
+  const sBtn = (k,l) => `<button type="button" class="fbtn${ui.exp.season===k?" on":""}" onclick="expSetSeason('${k}')">${l}</button>`;
+  const cBtn = (k,l) => `<button type="button" class="fbtn${ui.exp.cat===k?" on":""}" onclick="expSetCat('${k}')">${l}</button>`;
+  const guestCount = db.experiences.filter(e=>e.visibleToGuests).length;
+  const seasonIcon = k => k==="winter"?"❄️":k==="summer"?"☀️":"🔁";
+  return `
+  <div class="page-head"><div class="eyebrow">Ønskekatalog</div><h1>Oplevelser</h1>
+    <p>De gode idéer i og omkring Kvitfjell — så de ikke bliver fundet én gang og glemt igen. ${guestCount} vises i gæsteguiden.</p></div>
+  <div class="searchbox"><span class="s-ic">🔍</span>
+    <input id="exp-q" placeholder="Søg i oplevelser…" value="${esc(ui.exp.q)}" oninput="expSearch(this.value)" aria-label="Søg i oplevelser"></div>
+  <div class="filters">
+    ${sBtn("all","Alle sæsoner")}${Object.keys(EXP_SEASON).map(k=>sBtn(k, seasonIcon(k)+" "+EXP_SEASON[k])).join("")}
+    <button type="button" class="fbtn${ui.exp.kids?" on":""}" onclick="expKids()">🧒 Børnevenligt</button>
+  </div>
+  <div class="filters">${cBtn("all","Alle kategorier")}${Object.keys(EXP_CAT).map(k=>cBtn(k,(EXP_EMOJI[k]||"")+" "+EXP_CAT[k])).join("")}</div>
+  <div id="exp-list">${expListHtml()}</div>
+  <button type="button" class="fab" onclick="expForm()" aria-label="Tilføj oplevelse">+</button>`;
+}
+function expSearch(v){ ui.exp.q=v; const el=document.getElementById("exp-list"); if(el) el.innerHTML=expListHtml(); }
+function expSetSeason(k){ ui.exp.season=(ui.exp.season===k&&k!=="all")?"all":k; render(); }
+function expSetCat(k){ ui.exp.cat=(ui.exp.cat===k&&k!=="all")?"all":k; render(); }
+function expKids(){ ui.exp.kids=!ui.exp.kids; render(); }
+function expCycle(id){ commit(d=>{ const e=d.experiences.find(x=>x.id===id); if(e){ e.status=EXP_NEXT[e.status]||"want_to_try"; e.updatedAt=nowISO(); } }); }
+function expGuestToggle(id){
+  const e = db.experiences.find(x=>x.id===id); const was = e && e.visibleToGuests;
+  commit(d=>{ const x=d.experiences.find(y=>y.id===id); if(x){ x.visibleToGuests=!x.visibleToGuests; x.updatedAt=nowISO(); } });
+  toast(was?"Skjult for gæster":"Vises nu i gæsteguiden 📖");
+}
+function expForm(id){
+  const e = id ? db.experiences.find(x=>x.id===id) : null;
+  openModal(`<h2>${e?"Redigér oplevelse":"Ny oplevelse"}</h2>
+  <div class="field"><label>Titel</label><input id="f-title" value="${esc(e?e.title:"")}" placeholder="Fx vandretur til Varden"></div>
+  <div class="field"><label>Beskrivelse</label><textarea id="f-desc" rows="2" placeholder="Hvad gør den god?">${esc(e?e.description||"":"")}</textarea></div>
+  <div class="field-row">
+    <div class="field"><label>Kategori</label><select id="f-cat">${Object.keys(EXP_CAT).map(k=>`<option value="${k}"${(e?e.category:"local_tip")===k?" selected":""}>${EXP_CAT[k]}</option>`).join("")}</select></div>
+    <div class="field"><label>Sæson</label><select id="f-season">${Object.keys(EXP_SEASON).map(k=>`<option value="${k}"${(e?e.season:"all_year")===k?" selected":""}>${EXP_SEASON[k]}</option>`).join("")}</select></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Prisniveau</label><select id="f-price">
+      <option value=""${!e||!e.priceLevel?" selected":""}>Ikke angivet</option>
+      ${["free","low","medium","high"].map(k=>`<option value="${k}"${e&&e.priceLevel===k?" selected":""}>${PRICE[k]}</option>`).join("")}</select></div>
+    <div class="field"><label>Sted</label><input id="f-loc" value="${esc(e?e.location||"":"")}" placeholder="Fx Fåvang"></div>
+  </div>
+  <div class="field"><label>Link</label><input id="f-link" value="${esc(e?e.link||"":"")}" placeholder="https://…" inputmode="url"></div>
+  <div class="field"><label>Intern note</label><input id="f-note" value="${esc(e?e.note||"":"")}" placeholder="Ses ikke af gæster"></div>
+  <label class="check-line" style="margin-bottom:9px"><input type="checkbox" id="f-kids"${!e||e.childFriendly?" checked":""}> Børnevenlig 🧒</label>
+  <label class="check-line"><input type="checkbox" id="f-guest"${e&&e.visibleToGuests?" checked":""}> Må vises i gæsteguiden 📖</label>
+  <div class="modal-actions">
+    ${e?`<button type="button" class="btn danger" onclick="expDelete('${e.id}')">Slet</button>`:""}
+    <button type="button" class="btn ghost" onclick="closeModal()">Annullér</button>
+    <button type="button" class="btn" onclick="expSave('${e?e.id:""}')">Gem</button>
+  </div>`);
+}
+function expSave(id){
+  const title = val("f-title"); if(!title){ toast("Giv oplevelsen en titel"); return; }
+  commit(d=>{
+    const data = { title, description:val("f-desc")||undefined, category:val("f-cat")||"other",
+      season:val("f-season")||"all_year", childFriendly:checked("f-kids"),
+      priceLevel:val("f-price")||undefined, link:val("f-link")||undefined, location:val("f-loc")||undefined,
+      note:val("f-note")||undefined, visibleToGuests:checked("f-guest"), updatedAt:nowISO() };
+    if(id){ const e=d.experiences.find(x=>x.id===id); if(e) Object.assign(e, data); }
+    else d.experiences.unshift(Object.assign({id:uid(), status:"want_to_try", createdAt:nowISO()}, data));
+    logUpdate((id?"Opdaterede":"Ny")+" oplevelse: "+title);
+  });
+  closeModal(); toast(id?"Oplevelsen er opdateret":"Oplevelsen er gemt");
+}
+function expDelete(id){
+  commit(d=>{ d.experiences = d.experiences.filter(x=>x.id!==id); });
+  closeModal(); toast("Oplevelsen er slettet");
+}
+/* ---------- Gæsteguide (redigering, kun ejer/familie) ---------- */
+function shareUrl(){ return location.origin + location.pathname + "#/guest/" + db.guestGuide.shareId; }
+function copyText(text, okMsg){
+  const done = ()=>toast(okMsg);
+  const fail = ()=>toast("Kunne ikke kopiere — markér teksten manuelt");
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(done, fail); return; }
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch(e){ fail(); }
+  document.body.removeChild(ta);
+}
+function ggField(id, label, value, rows){
+  return rows
+    ? `<div class="field"><label>${label}</label><textarea id="${id}" rows="${rows}">${esc(value||"")}</textarea></div>`
+    : `<div class="field"><label>${label}</label><input id="${id}" value="${esc(value||"")}"></div>`;
+}
+function renderGuestGuideEditor(){
+  const g = db.guestGuide;
+  const isOwner = db.settings.role === "owner";
+  const guestExps = db.experiences.filter(e=>e.visibleToGuests);
+  return `
+  <div class="page-head"><div class="eyebrow">Digital velkomstmappe</div><h1>Gæsteguide</h1>
+    <p>Alt det, jeres gæster skal vide — uden lange beskeder hver gang. Gæster ser aldrig lager, tøj eller interne opgaver.</p></div>
+
+  <div class="share">
+    <div class="row-between"><h3>Gæstelink</h3>${chip(g.shareEnabled?"ok":"neutral", g.shareEnabled?"Aktivt":"Slået fra")}</div>
+    <p>${g.shareEnabled?"Gæsteguiden er klar til deling — send linket til jeres gæster.":"Linket er slået fra. Gæster kan ikke åbne guiden lige nu."}</p>
+    ${g.shareEnabled?`<div class="link-row"><span class="url">${esc(shareUrl())}</span>
+      <button type="button" onclick="copyText(shareUrl(),'Linket er kopieret 🔗')">Kopiér</button></div>`:""}
+    <div style="display:flex;gap:9px;margin-top:13px;flex-wrap:wrap">
+      ${g.shareEnabled?`<a class="btn sm" style="background:#fff;color:var(--accent)" href="#/guest/${esc(g.shareId)}">👀 Se som gæst</a>`:""}
+      ${isOwner ? `
+        <button type="button" class="btn sm" style="background:rgba(255,255,255,0.18);color:#fff;box-shadow:none" onclick="ggShareToggle()">${g.shareEnabled?"Slå link fra":"Slå link til"}</button>
+        ${g.shareEnabled?`<button type="button" class="btn sm" style="background:rgba(255,255,255,0.18);color:#fff;box-shadow:none" onclick="ggRegenerate()">Nyt link</button>`:""}`
+      : `<span style="font-size:12.5px;color:rgba(255,255,255,0.8);align-self:center">Kun ejeren kan ændre delingsindstillinger.</span>`}
+    </div>
+  </div>
+
+  <div class="sect"><h2>Velkomst</h2><span class="muted">Opdateret ${timeAgo(g.updatedAt)}</span></div>
+  <div class="card pad">
+    ${ggField("gg-welcomeTitle","Overskrift",g.welcomeTitle)}
+    ${ggField("gg-welcomeText","Velkomsttekst",g.welcomeText,3)}
+  </div>
+
+  <div class="sect"><h2>Wifi</h2></div>
+  <div class="card pad"><div class="field-row">
+    ${ggField("gg-wifiName","Netværksnavn",g.wifiName)}
+    ${ggField("gg-wifiPassword","Adgangskode",g.wifiPassword)}
+  </div></div>
+
+  <div class="sect"><h2>Praktisk info</h2></div>
+  <div class="card pad">
+    ${ggField("gg-address","Adresse og adgang",g.address,2)}
+    ${ggField("gg-parkingInfo","Parkering",g.parkingInfo,2)}
+    ${ggField("gg-heatingInstructions","Varme",g.heatingInstructions,3)}
+    ${ggField("gg-waterInstructions","Vand",g.waterInstructions,3)}
+    ${ggField("gg-trashInstructions","Affald",g.trashInstructions,3)}
+    ${ggField("gg-houseRules","Husregler",g.houseRules,3)}
+    ${ggField("gg-cleaningInstructions","Rengøring",g.cleaningInstructions,2)}
+  </div>
+
+  <div class="sect"><h2>Gæsternes afrejseliste</h2></div>
+  <div class="card pad">
+    <div class="field" style="margin-bottom:0"><label>Ét punkt pr. linje — vises som tjekliste for gæsten</label>
+    <textarea id="gg-departureInstructions" rows="5">${esc(g.departureInstructions||"")}</textarea></div>
+  </div>
+
+  <div class="sect"><h2>Kontakt og nødinfo</h2></div>
+  <div class="card pad">
+    ${ggField("gg-emergencyInfo","Nødnumre og akut info",g.emergencyInfo,2)}
+    ${ggField("gg-contactName","Kontaktperson",g.contactName)}
+    ${ggField("gg-contactPhone","Telefon",g.contactPhone)}
+    ${ggField("gg-contactEmail","E-mail",g.contactEmail)}
+  </div>
+
+  <div class="sect"><h2>Anbefalinger til gæster</h2><a href="#/experiences">Administrér →</a></div>
+  <div class="card list">
+    ${guestExps.length===0
+      ? `<div class="empty" style="padding:20px 16px"><h3>Ingen anbefalinger valgt</h3><p>Markér oplevelser som “må vises i gæsteguiden” under Oplevelser.</p></div>`
+      : guestExps.map(e=>`<div class="li"><div class="ic">${EXP_EMOJI[e.category]||""}</div>
+        <div class="li-main"><div class="nm">${esc(e.title)}</div>${e.location?`<div class="ct">📍 ${esc(e.location)}</div>`:""}</div>
+        <button type="button" class="muted" onclick="expGuestToggle('${e.id}')">Fjern</button></div>`).join("")}
+  </div>
+
+  <div style="position:sticky;bottom:90px;margin-top:18px;z-index:30">
+    <button type="button" class="btn block" onclick="ggSave()">Gem ændringer</button>
+  </div>`;
+}
+function ggSave(){
+  const fields = ["welcomeTitle","welcomeText","wifiName","wifiPassword","address","parkingInfo",
+    "heatingInstructions","waterInstructions","trashInstructions","houseRules","cleaningInstructions",
+    "departureInstructions","emergencyInfo","contactName","contactPhone","contactEmail"];
+  commit(d=>{
+    fields.forEach(f=>{ const el=document.getElementById("gg-"+f); if(el) d.guestGuide[f]=el.value.trim(); });
+    d.guestGuide.updatedAt = nowISO();
+    logUpdate("Gæsteguiden blev opdateret");
+  });
+  toast("Gæsteguiden er gemt 📖");
+}
+function ggShareToggle(){
+  if(db.settings.role!=="owner") return;
+  const was = db.guestGuide.shareEnabled;
+  commit(d=>{ d.guestGuide.shareEnabled=!was; d.guestGuide.updatedAt=nowISO();
+    logUpdate(was?"Gæstelink slået fra":"Gæstelink slået til"); });
+  toast(was?"Gæstelink slået fra":"Gæstelink slået til ✅");
+}
+function ggRegenerate(){
+  if(db.settings.role!=="owner") return;
+  if(!confirm("Nyt link gør det gamle ugyldigt. Fortsæt?")) return;
+  commit(d=>{ d.guestGuide.shareId="kvitfjell-"+uid().slice(0,6); d.guestGuide.updatedAt=nowISO();
+    logUpdate("Nyt gæstelink genereret"); });
+  toast("Nyt gæstelink genereret");
+}
+
+/* ---------- Gæstevisning ----------
+   SIKKERHEDSGRÆNSE: Denne visning bruger KUN guestPayload(),
+   som udelukkende giver gæsteguiden + oplevelser med visibleToGuests=true.
+   Ingen lager, tøj, opgaver eller interne noter. */
+function guestPayload(shareId){
+  const g = db.guestGuide;
+  if(!g.shareEnabled || g.shareId!==shareId) return null;
+  return { guide:g, experiences: db.experiences.filter(e=>e.visibleToGuests) };
+}
+function guestInfoCard(emoji, title, body){
+  if(!body || !String(body).trim()) return "";
+  return `<div class="card info-card"><div class="ic-head"><div class="ic-ic">${emoji}</div><h3>${esc(title)}</h3></div>
+    <p class="body">${esc(body)}</p></div>`;
+}
+function renderGuest(shareId){
+  const payload = guestPayload(shareId);
+  if(!payload){
+    return `<div class="app"><main class="main" style="padding-top:60px"><div class="main-inner">
+      <div class="card">${emptyState("🔒","Linket virker ikke længere","Gæsteguiden er ikke tilgængelig lige nu. Kontakt jeres værter for et nyt link.")}</div>
+    </div></main></div>`;
+  }
+  const g = payload.guide;
+  const lines = (g.departureInstructions||"").split("\n").map(l=>l.trim()).filter(Boolean);
+  const allDone = lines.length>0 && lines.every((_,i)=>ui.guestDone[i]);
+  const guestExpCard = e => `<div class="exp">
+    <div class="exp-img">${miniScene(expSceneKind(e))}
+      <div style="position:absolute;top:10px;left:10px"><span class="tag" style="background:rgba(255,255,255,0.92)">${EXP_EMOJI[e.category]||""} ${EXP_CAT[e.category]||""}</span></div></div>
+    <div class="exp-body"><h3>${esc(e.title)}</h3>
+      ${e.description?`<p class="desc">${esc(e.description)}</p>`:""}
+      <div class="tags">${e.childFriendly?'<span class="tag">🧒 Børnevenlig</span>':""}${e.priceLevel?`<span class="tag">${PRICE[e.priceLevel]||""}</span>`:""}${e.location?`<span class="tag">📍 ${esc(e.location)}</span>`:""}</div>
+      ${e.link?`<a href="${esc(e.link)}" target="_blank" rel="noreferrer" style="color:var(--accent);font-weight:700;font-size:13px">Læs mere ↗</a>`:""}
+    </div></div>`;
+  return `<div class="app"><main class="main" style="padding-bottom:40px"><div class="main-inner">
+    <div class="guest-hero">${heroScene("winter")}</div>
+    <div class="guest-panel">
+      <div class="muted" style="font-weight:700;letter-spacing:0.06em;text-transform:uppercase;font-size:11px">Gæsteguide · Kvitfjell</div>
+      <h1 style="margin-top:6px">${esc(g.welcomeTitle)}</h1>
+      <p>${esc(g.welcomeText)}</p>
+    </div>
+    ${g.wifiName?`<div class="card info-card"><div class="ic-head"><div class="ic-ic">📶</div><h3>Wifi</h3></div>
+      <div class="wifi-box"><div><div class="muted">Netværk</div><div class="code">${esc(g.wifiName)}</div></div>
+      ${g.wifiPassword?`<div style="text-align:right"><div class="muted">Kode</div><div class="code">${esc(g.wifiPassword)}</div></div>`:""}</div>
+      ${g.wifiPassword?`<button type="button" class="btn soft block" style="margin-top:11px" onclick="copyText('${esc(g.wifiPassword).replace(/'/g,"\\'")}','Wifi-koden er kopieret 📶')">Kopiér wifi-kode</button>`:""}
+    </div>`:""}
+    ${guestInfoCard("📍","Adresse og adgang",g.address)}
+    ${guestInfoCard("🚗","Parkering",g.parkingInfo)}
+    ${guestInfoCard("🔥","Varme",g.heatingInstructions)}
+    ${guestInfoCard("🚰","Vand",g.waterInstructions)}
+    ${guestInfoCard("🗑️","Affald",g.trashInstructions)}
+    ${guestInfoCard("🏡","Husregler",g.houseRules)}
+    ${guestInfoCard("🧽","Rengøring",g.cleaningInstructions)}
+    ${lines.length ? `<div class="card" style="margin-top:13px">
+      <div class="info-card" style="padding-bottom:4px"><div class="ic-head" style="margin-bottom:2px"><div class="ic-ic">🧳</div><h3>Inden I rejser</h3></div></div>
+      <div>${lines.map((line,i)=>`<div class="chk-row${ui.guestDone[i]?" done":""}" onclick="guestToggle(${i})" role="checkbox" aria-checked="${!!ui.guestDone[i]}" tabindex="0"
+        onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();guestToggle(${i})}">
+        <div class="chk-box">${ui.guestDone[i]?"✓":""}</div><span class="txt">${esc(line)}</span></div>`).join("")}</div>
+      ${allDone?'<div class="center-note" style="padding-bottom:16px">Tusind tak — og kom godt hjem! 💛</div>':""}
+    </div>` : ""}
+    ${payload.experiences.length ? `<div class="sect"><h2>Vores bedste tips i området</h2></div>
+      <div class="exp-grid">${payload.experiences.map(guestExpCard).join("")}</div>` : ""}
+    ${guestInfoCard("🚨","Nødnumre",g.emergencyInfo)}
+    ${(g.contactName||g.contactPhone||g.contactEmail)?`<div class="card info-card">
+      <div class="ic-head"><div class="ic-ic">💬</div><h3>Spørgsmål? Ring endelig</h3></div>
+      <p class="body">${esc([g.contactName,g.contactPhone,g.contactEmail].filter(Boolean).join("\n"))}</p>
+      ${g.contactPhone?`<a class="btn soft block" style="margin-top:12px" href="tel:${esc(g.contactPhone.replace(/\s/g,""))}">📞 Ring til ${esc(g.contactName||"værterne")}</a>`:""}
+    </div>`:""}
+    <div class="center-note">God tur til fjeldet 🏔️ · HytteKlar</div>
+  </div></main></div>`;
+}
+function guestToggle(i){ ui.guestDone[i] = !ui.guestDone[i]; render(); }
+
+/* ---------- Mere & Indstillinger ---------- */
+function renderMore(){
+  const links = [
+    {p:"/experiences", l:"Oplevelser", e:"🧭", d:"Idéer og favoritter i området"},
+    {p:"/clothing", l:"Tøj & udstyr", e:"🧥", d:"Hvad ligger i hytten — pr. person"},
+    {p:"/guest-guide", l:"Gæsteguide", e:"📖", d:"Velkomstmappe og delingslink"},
+    {p:"/settings", l:"Indstillinger", e:"⚙️", d:"Sæson, familie og næste tur"}
+  ];
+  return `<div class="page-head"><div class="eyebrow">Mere</div><h1>Alle sektioner</h1></div>
+  <div class="stack">${links.map(l=>`<a class="card" href="#${l.p}" style="padding:16px 17px;display:flex;gap:13px;align-items:center">
+    <div style="width:46px;height:46px;border-radius:16px;background:var(--accent-tint);display:grid;place-items:center;font-size:21px;flex:none">${l.e}</div>
+    <div style="flex:1"><h3 style="font-size:17px">${l.l}</h3><div class="muted">${l.d}</div></div>
+    <span style="color:var(--ink-45);font-size:18px">›</span></a>`).join("")}</div>`;
+}
+function renderSettings(){
+  const s = db.settings;
+  const trip = s.nextTrip || {};
+  return `
+  <div class="page-head"><div class="eyebrow">Opsætning</div><h1>Indstillinger</h1></div>
+  <div class="sect"><h2>Rolle (mock-login)</h2></div>
+  <div class="card pad">
+    <p class="muted" style="margin:0 0 10px">MVP’en har ingen rigtig login. Skift rolle for at afprøve, hvad et familiemedlem må — fx kan kun ejeren ændre gæstelinkets delingsindstillinger.</p>
+    <div style="display:flex;gap:8px">
+      <button type="button" class="fbtn${s.role==="owner"?" on":""}" onclick="setRole('owner')">👑 Ejer</button>
+      <button type="button" class="fbtn${s.role==="member"?" on":""}" onclick="setRole('member')">👤 Familiemedlem</button>
+    </div>
+  </div>
+  <div class="sect"><h2>Næste tur</h2></div>
+  <div class="card pad">
+    <div class="field"><label>Titel</label><input id="trip-title" value="${esc(trip.title||"")}" placeholder="Fx vinterferie i Kvitfjell"></div>
+    <div class="field-row">
+      <div class="field"><label>Fra</label><input type="date" id="trip-start" value="${trip.startDate||""}"></div>
+      <div class="field"><label>Til</label><input type="date" id="trip-end" value="${trip.endDate||""}"></div>
+    </div>
+    <div class="field"><label>Note</label><input id="trip-note" value="${esc(trip.note||"")}" placeholder="Fx 6 personer · ski"></div>
+    <button type="button" class="btn block" onclick="saveTrip()">Gem næste tur</button>
+  </div>
+  <div class="sect"><h2>Familiemedlemmer</h2></div>
+  <div class="card pad">
+    <div class="field"><label>Navne, adskilt med komma</label><input id="fam-members" value="${esc(s.familyMembers.join(", "))}" placeholder="Mor, Far, Barn 1…"></div>
+    <button type="button" class="btn soft block" onclick="saveMembers()">Gem familie</button>
+  </div>
+  <div class="sect"><h2>Data</h2></div>
+  <div class="card pad">
+    <p class="muted" style="margin:0 0 11px">Alt gemmes lokalt i denne browser (localStorage). Nulstilling genskaber demo-dataene og kan ikke fortrydes.</p>
+    <button type="button" class="btn danger block" onclick="resetAll()">Nulstil alle data</button>
+  </div>
+  <div class="center-note">HytteKlar MVP · data ligger kun i din browser</div>`;
+}
+function setRole(r){ commit(d=>{ d.settings.role=r; }); toast(r==="owner"?"Du er nu Ejer 👑":"Du er nu Familiemedlem"); }
+function saveTrip(){
+  const title = val("trip-title"), start = val("trip-start");
+  if(!title || !start){ commit(d=>{ d.settings.nextTrip=undefined; logUpdate("Næste tur fjernet"); }); toast("Næste tur er fjernet"); return; }
+  commit(d=>{ d.settings.nextTrip = { title, startDate:start, endDate:val("trip-end")||undefined, note:val("trip-note")||undefined };
+    logUpdate("Næste tur opdateret: "+title); });
+  toast("Næste tur er gemt 🗓️");
+}
+function saveMembers(){
+  const list = val("fam-members").split(",").map(m=>m.trim()).filter(Boolean);
+  commit(d=>{ d.settings.familyMembers = list; });
+  toast("Familien er opdateret");
+}
+function resetAll(){
+  if(!confirm("Nulstil alle data til demo-udgangspunktet?")) return;
+  db = createDefaultDB(); persist(); render(); toast("Alt er nulstillet");
+}
+
+/* ---------- Start ---------- */
+render();
+
+/* ---------- Service worker (offline) ---------- */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

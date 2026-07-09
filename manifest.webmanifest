@@ -1,0 +1,19 @@
+{
+  "name": "HytteKlar",
+  "short_name": "HytteKlar",
+  "description": "Familiens kontrolcenter for hytten i Kvitfjell",
+  "lang": "da",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF8F2",
+  "theme_color": "#5E7A9B",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235E7A9B'/%3E%3Cpath d='M4 25 L12 10 L17 18 L21 12 L28 25 Z' fill='%23E9F0F5'/%3E%3Cpath d='M12 10 L14.5 14.5 L12 16 L9.5 14 Z' fill='%23fff'/%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
